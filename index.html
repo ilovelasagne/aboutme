@@ -6,9 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Christian's Developer Portfolio</title>
     <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>
+    <!-- Adding Google Fonts for a modern font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Optional: Add a subtle gradient background */
         body {
+            font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #f3f4f6 0%, #d1d5db 100%);
             scroll-behavior: smooth;
         }
@@ -29,6 +31,16 @@
                 transform: translateY(0);
             }
         }
+
+        /* Custom box styling */
+        .box {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+        }
     </style>
 </head>
 
@@ -48,57 +60,67 @@
 
             <!-- About Me Section -->
             <section class="mb-10 fade-in">
-                <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">About Me</h2>
-                <p class="mt-4 text-lg text-gray-700">
-                    Hello! I'm Christian, an aspiring young developer with a passion for creating innovative and fun
-                    applications. I specialize in mobile and web development, and I'm constantly learning new
-                    technologies to improve my skills.
-                </p>
-                <p class="mt-4 text-lg text-gray-700">
-                    Feel free to explore my projects, and let’s connect!
-                </p>
+                <div class="box">
+                    <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">About Me</h2>
+                    <p class="mt-4 text-lg text-gray-700">
+                        Hello! I'm Christian, an aspiring young developer with a passion for creating innovative and fun
+                        applications. I specialize in mobile and web development, and I'm constantly learning new
+                        technologies to improve my skills.
+                    </p>
+                    <p class="mt-4 text-lg text-gray-700">
+                        Feel free to explore my projects, and let’s connect!
+                    </p>
+                </div>
             </section>
 
             <!-- Projects Section -->
             <section class="mb-10 fade-in">
-                <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">My Projects</h2>
-                <p class="mt-4 text-lg text-gray-700">
-                    <strong class="text-gray-900">Tapper App:</strong> Tapper is a fun and engaging mobile app where you
-                    can tap your way to success. It's designed to be simple yet addictive, making it perfect for quick,
-                    casual gameplay. Currently, Tapper is available for download on [App Store/Google Play link, if
-                    applicable]. I’m excited about the future of this app and constantly adding new features.
-                </p>
+                <div class="box">
+                    <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">My Projects</h2>
+                    <p class="mt-4 text-lg text-gray-700">
+                        <strong class="text-gray-900">Tapper App:</strong> Tapper is a fun and engaging mobile app where you
+                        can tap your way to success. It's designed to be simple yet addictive, making it perfect for quick,
+                        casual gameplay. Currently, Tapper is available for download on [App Store/Google Play link, if
+                        applicable]. I’m excited about the future of this app and constantly adding new features.
+                    </p>
+                </div>
             </section>
 
             <!-- GitHub Link Section -->
             <section class="mb-10 fade-in">
-                <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">Check out my GitHub</h2>
-                <p class="mt-4 text-lg text-gray-700">
-                    You can find my code and open-source projects on my{' '}
-                    <a href="https://github.com/ilovelasagne" target="_blank"
-                        class="text-blue-600 hover:text-blue-800 font-bold transition-colors duration-300">GitHub Profile</a>.
-                </p>
+                <div class="box">
+                    <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">Check out my GitHub</h2>
+                    <p class="mt-4 text-lg text-gray-700">
+                        You can find my code and open-source projects on my{' '}
+                        <a href="https://github.com/ilovelasagne" target="_blank"
+                            class="text-blue-600 hover:text-blue-800 font-bold transition-colors duration-300">GitHub Profile</a>.
+                    </p>
+                </div>
             </section>
 
             <!-- Contact Section -->
             <section class="mb-10 fade-in">
-                <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">Get in Touch</h2>
-                <p class="mt-4 text-lg text-gray-700">
-                    If you have any questions or want to collaborate, don’t hesitate to reach out!
-                </p>
-                <p class="mt-2 text-lg text-gray-700">
-                    Email: <a href="mailto:thtssoskibidi@gmail.com"
-                        class="text-blue-600 hover:text-blue-800 font-bold transition-colors duration-300">thtssoskibidi@gmail.com</a>
-                </p>
+                <div class="box">
+                    <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">Get in Touch</h2>
+                    <p class="mt-4 text-lg text-gray-700">
+                        If you have any questions or want to collaborate, don’t hesitate to reach out!
+                    </p>
+                    <p class="mt-2 text-lg text-gray-700">
+                        Email: <a href="mailto:thtssoskibidi@gmail.com"
+                            class="text-blue-600 hover:text-blue-800 font-bold transition-colors duration-300">thtssoskibidi@gmail.com</a>
+                    </p>
+                </div>
             </section>
 
             <!-- Privacy Policy Link -->
-            <section class="fade-in">
-                <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">Privacy Policy</h2>
-                <p class="mt-4 text-lg text-gray-700">
-                    For information on how we handle your privacy, please read our <a href="privacy.txt"
-                        class="text-blue-600 hover:text-blue-800 font-bold transition-colors duration-300">Privacy Policy</a>.
-                </p>
+            <section>
+                <div class="box">
+                    <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">Privacy Policy</h2>
+                    <p class="mt-4 text-lg text-gray-700">
+                        For information on how we handle your privacy, please read our <a href="privacy.txt"
+                            class="text-blue-600 hover:text-blue-800 font-bold transition-colors duration-300">Privacy Policy</a>.
+                    </p>
+                </div>
             </section>
         </div>
     </main>
