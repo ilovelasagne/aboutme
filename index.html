@@ -7,9 +7,27 @@
     <title>Christian's Developer Portfolio</title>
     <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>
     <style>
-        /* Optional custom styles for background gradient */
+        /* Optional: Add a subtle gradient background */
         body {
             background: linear-gradient(135deg, #f3f4f6 0%, #d1d5db 100%);
+            scroll-behavior: smooth;
+        }
+
+        /* Animation classes for smooth scrolling and fade-in */
+        .fade-in {
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -17,9 +35,9 @@
 <body class="font-sans text-gray-800">
 
     <!-- Header -->
-    <header class="bg-gray-900 text-white py-6 shadow-md">
+    <header class="bg-gray-900 text-white py-6 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
         <div class="container mx-auto text-center">
-            <h1 class="text-4xl font-extrabold">Welcome to Christian's Developer Portfolio</h1>
+            <h1 class="text-4xl font-extrabold animate__animated animate__fadeIn">Welcome to Christian's Developer Portfolio</h1>
             <p class="mt-2 text-lg">Aspiring Developer | Creator of Tapper</p>
         </div>
     </header>
@@ -29,8 +47,8 @@
         <div class="container mx-auto">
 
             <!-- About Me Section -->
-            <section class="mb-10">
-                <h2 class="text-3xl font-semibold text-gray-900">About Me</h2>
+            <section class="mb-10 fade-in">
+                <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">About Me</h2>
                 <p class="mt-4 text-lg text-gray-700">
                     Hello! I'm Christian, an aspiring young developer with a passion for creating innovative and fun
                     applications. I specialize in mobile and web development, and I'm constantly learning new
@@ -42,8 +60,8 @@
             </section>
 
             <!-- Projects Section -->
-            <section class="mb-10">
-                <h2 class="text-3xl font-semibold text-gray-900">My Projects</h2>
+            <section class="mb-10 fade-in">
+                <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">My Projects</h2>
                 <p class="mt-4 text-lg text-gray-700">
                     <strong class="text-gray-900">Tapper App:</strong> Tapper is a fun and engaging mobile app where you
                     can tap your way to success. It's designed to be simple yet addictive, making it perfect for quick,
@@ -53,33 +71,33 @@
             </section>
 
             <!-- GitHub Link Section -->
-            <section class="mb-10">
-                <h2 class="text-3xl font-semibold text-gray-900">Check out my GitHub</h2>
+            <section class="mb-10 fade-in">
+                <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">Check out my GitHub</h2>
                 <p class="mt-4 text-lg text-gray-700">
                     You can find my code and open-source projects on my{' '}
                     <a href="https://github.com/ilovelasagne" target="_blank"
-                        class="text-blue-600 hover:text-blue-800 font-bold">GitHub Profile</a>.
+                        class="text-blue-600 hover:text-blue-800 font-bold transition-colors duration-300">GitHub Profile</a>.
                 </p>
             </section>
 
             <!-- Contact Section -->
-            <section class="mb-10">
-                <h2 class="text-3xl font-semibold text-gray-900">Get in Touch</h2>
+            <section class="mb-10 fade-in">
+                <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">Get in Touch</h2>
                 <p class="mt-4 text-lg text-gray-700">
                     If you have any questions or want to collaborate, don’t hesitate to reach out!
                 </p>
                 <p class="mt-2 text-lg text-gray-700">
                     Email: <a href="mailto:thtssoskibidi@gmail.com"
-                        class="text-blue-600 hover:text-blue-800 font-bold">thtssoskibidi@gmail.com</a>
+                        class="text-blue-600 hover:text-blue-800 font-bold transition-colors duration-300">thtssoskibidi@gmail.com</a>
                 </p>
             </section>
 
             <!-- Privacy Policy Link -->
-            <section>
-                <h2 class="text-3xl font-semibold text-gray-900">Privacy Policy</h2>
+            <section class="fade-in">
+                <h2 class="text-3xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">Privacy Policy</h2>
                 <p class="mt-4 text-lg text-gray-700">
                     For information on how we handle your privacy, please read our <a href="privacy.txt"
-                        class="text-blue-600 hover:text-blue-800 font-bold">Privacy Policy</a>.
+                        class="text-blue-600 hover:text-blue-800 font-bold transition-colors duration-300">Privacy Policy</a>.
                 </p>
             </section>
         </div>
@@ -92,6 +110,18 @@
         </div>
     </footer>
 
+    <!-- Tailwind CSS Animation -->
+    <script>
+        // Optional: For smooth scroll animation
+        window.addEventListener('scroll', function () {
+            const fadeInSections = document.querySelectorAll('.fade-in');
+            fadeInSections.forEach(section => {
+                if (section.getBoundingClientRect().top < window.innerHeight) {
+                    section.classList.add('animate__fadeIn');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
