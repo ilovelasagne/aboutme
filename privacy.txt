@@ -1,17 +1,200 @@
-Effective Date: 1/09/2025 or September the 1st 2025
-
-At Tapper, we value your privacy and are committed to protecting your personal information. This Privacy Policy outlines how we handle your data when you use our app.
-
-Data Collection
-
-We want to assure you that as of now, Tapper does not collect any personal data from users. We do not track, store, or share your personal information when using our app.
-
-Changes to This Privacy Policy
-
-While we do not collect any data at this time, we reserve the right to update or change this Privacy Policy at any time. If we decide to collect any user data in the future, we will do so in compliance with applicable laws. We are not required to notify users about changes to this policy, so we encourage you to review this policy periodically.
-
-Your Consent
-
-By using Tapper, you consent to this Privacy Policy. Continued use of the app after changes to this policy are made will indicate your acceptance of those changes.
-
-If you have any questions or concerns about this policy, feel free to contact us at thtssoskibidi@gmail.com.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tapper - Privacy Policy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            background-color: rgba(255,255,255,0.2);
+            transform: translateY(-1px);
+        }
+        
+        main {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .content-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .effective-date {
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin: 2rem 0 1rem 0;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+        
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        
+        .intro {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #3498db;
+        }
+        
+        .contact-info {
+            background: #e8f4fd;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #bde0ff;
+        }
+        
+        .contact-link {
+            color: #2980b9;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .contact-link:hover {
+            text-decoration: underline;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+            background: white;
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            main {
+                padding: 0 1rem;
+            }
+            
+            .content-card {
+                padding: 2rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Tapper</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tapper.html">App</a></li>
+                <li><a href="#privacy" style="background-color: rgba(255,255,255,0.2);">Privacy Policy</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <div class="content-card">
+            <h1>Privacy Policy</h1>
+            <div class="effective-date">Effective Date: September 1st, 2025</div>
+            
+            <div class="intro">
+                <p>At Tapper, we value your privacy and are committed to protecting your personal information. This Privacy Policy outlines how we handle your data when you use our app.</p>
+            </div>
+            
+            <h2>Data Collection</h2>
+            <p>We want to assure you that as of now, Tapper does not collect any personal data from users. We do not track, store, or share your personal information when using our app.</p>
+            
+            <h2>Changes to This Privacy Policy</h2>
+            <p>While we do not collect any data at this time, we reserve the right to update or change this Privacy Policy at any time. If we decide to collect any user data in the future, we will do so in compliance with applicable laws. We are not required to notify users about changes to this policy, so we encourage you to review this policy periodically.</p>
+            
+            <h2>Your Consent</h2>
+            <p>By using Tapper, you consent to this Privacy Policy. Continued use of the app after changes to this policy are made will indicate your acceptance of those changes.</p>
+            
+            <div class="contact-info">
+                <p>If you have any questions or concerns about this policy, feel free to contact us at <a href="mailto:thtssoskibidi@gmail.com" class="contact-link">thtssoskibidi@gmail.com</a>.</p>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Tapper. All rights reserved.</p>
+    </footer>
+</body>
+</html>
