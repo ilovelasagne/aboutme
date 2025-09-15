@@ -355,7 +355,7 @@
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
-            loadSampleVideos();
+            scanVideosDirectory();
             setupDragAndDrop();
         });
 
@@ -368,44 +368,410 @@
             }
         }
 
-        function loadSampleVideos() {
-            // Add some sample videos if no videos exist
-            if (videos.length === 0) {
-                const sampleVideos = [
-                    {
-                        id: 1,
-                        title: "Sample Video 1 - Nature Documentary",
-                        views: Math.floor(Math.random() * 100000),
-                        likes: Math.floor(Math.random() * 5000),
-                        comments: generateSampleComments(),
-                        uploadDate: new Date(Date.now() - Math.random() * 10000000000),
-                        thumbnail: generateThumbnail("Nature Scene"),
-                        src: null // Will be populated when actual files are added
-                    },
-                    {
-                        id: 2,
-                        title: "Sample Video 2 - Tech Review",
-                        views: Math.floor(Math.random() * 100000),
-                        likes: Math.floor(Math.random() * 5000),
-                        comments: generateSampleComments(),
-                        uploadDate: new Date(Date.now() - Math.random() * 10000000000),
-                        thumbnail: generateThumbnail("Tech Review"),
-                        src: null
-                    },
-                    {
-                        id: 3,
-                        title: "Sample Video 3 - Cooking Tutorial",
-                        views: Math.floor(Math.random() * 100000),
-                        likes: Math.floor(Math.random() * 5000),
-                        comments: generateSampleComments(),
-                        uploadDate: new Date(Date.now() - Math.random() * 10000000000),
-                        thumbnail: generateThumbnail("Cooking"),
-                        src: null
+        async function scanVideosDirectory() {
+            try {
+                // First try to load videos directly from the videos directory
+                await loadVideosFromServer();
+            } catch (error) {
+                console.log('Could not scan videos directory:', error);
+                // If that fails, try common video file names
+                await tryCommonVideoFiles();
+            }
+        }
+
+        function addDirectorySelector() {
+            const uploadArea = document.querySelector('.upload-area');
+            uploadArea.innerHTML = `
+                <div>
+                    <h3>📁 Select Your Videos Directory</h3>
+                    <p>Click below to select your "videos" folder</p>
+                    <button onclick="selectVideosDirectory()" style="
+                        padding: 12px 24px;
+                        background-color: #ff0000;
+                        color: white;
+                        border: none;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        margin: 10px;
+                        font-size: 16px;
+                    ">Select Videos Directory</button>
+                </div>
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #404040;">
+                    <h3>📁 Or drop video files here</h3>
+                    <p>Supported formats: MP4, WebM, AVI</p>
+                    <input type="file" id="fileInput" accept="video/*" multiple style="display: none;">
+                </div>
+            `;
+        }
+
+        async function selectVideosDirectory() {
+            try {
+                const dirHandle = await window.showDirectoryPicker();
+                await loadVideosFromDirectory(dirHandle);
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    console.error('Error selecting directory:', error);
+                    alert('Could not access the directory. Please try uploading individual files instead.');
+                }
+            }
+        }
+
+        async function loadVideosFromDirectory(dirHandle) {
+            const videoExtensions = ['.mp4', '.webm', '.avi', '.mov', '.mkv', '.wmv'];
+            let loadedCount = 0;
+
+            try {
+                for await (const entry of dirHandle.values()) {
+                    if (entry.kind === 'file') {
+                        const fileName = entry.name.toLowerCase();
+                        const hasVideoExtension = videoExtensions.some(ext => fileName.endsWith(ext));
+                        
+                        if (hasVideoExtension) {
+                            try {
+                                const file = await entry.getFile();
+                                const videoId = Date.now() + Math.random();
+                                
+                                // Create thumbnail from video
+                                const thumbnail = await generateVideoThumbnail(file);
+                                
+                                const video = {
+                                    id: videoId,
+                                    title: entry.name.replace(/\.[^/.]+$/, ""),
+                                    views: Math.floor(Math.random() * 1000), // Random initial views
+                                    likes: Math.floor(Math.random() * 100),
+                                    comments: generateSampleComments(),
+                                    uploadDate: new Date(file.lastModified || Date.now()),
+                                    thumbnail: thumbnail,
+                                    src: URL.createObjectURL(file),
+                                    file: file,
+                                    fileName: entry.name
+                                };
+                                
+                                videos.push(video);
+                                loadedCount++;
+                            } catch (fileError) {
+                                console.error(`Error loading ${entry.name}:`, fileError);
+                            }
+                        }
                     }
+                }
+
+                if (loadedCount > 0) {
+                    saveVideos();
+                    displayVideos();
+                    
+                    // Update upload area to show success
+                    const uploadArea = document.querySelector('.upload-area');
+                    uploadArea.innerHTML = `
+                        <div style="color: #4CAF50;">
+                            <h3>✅ Successfully loaded ${loadedCount} videos!</h3>
+                            <p>Videos have been loaded from your directory</p>
+                            <button onclick="selectVideosDirectory()" style="
+                                padding: 8px 16px;
+                                background-color: #ff0000;
+                                color: white;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                margin: 10px;
+                            ">Load More Videos</button>
+                        </div>
+                    `;
+                } else {
+                    alert('No video files found in the selected directory.');
+                }
+            } catch (error) {
+                console.error('Error reading directory:', error);
+                alert('Error reading the directory. Please try again.');
+            }
+        }
+
+        async function generateVideoThumbnail(file) {
+            return new Promise((resolve) => {
+                const video = document.createElement('video');
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                video.addEventListener('loadedmetadata', () => {
+                    canvas.width = 320;
+                    canvas.height = 180;
+                    
+                    // Seek to 10% of the video duration for thumbnail
+                    video.currentTime = Math.min(video.duration * 0.1, 5);
+                });
+                
+                video.addEventListener('seeked', () => {
+                    ctx.drawImage(video, 0, 0, 320, 180);
+                    const thumbnail = canvas.toDataURL();
+                    URL.revokeObjectURL(video.src);
+                    resolve(thumbnail);
+                });
+                
+                video.addEventListener('error', () => {
+                    // Fallback to generated thumbnail
+                    resolve(generateThumbnail(file.name));
+                });
+                
+                video.src = URL.createObjectURL(file);
+                video.load();
+            });
+        }
+
+        async function loadVideosFromServer() {
+            const videoExtensions = ['mp4', 'webm', 'avi', 'mov', 'mkv', 'wmv'];
+            let loadedCount = 0;
+
+            try {
+                // Try different approaches to load videos
+                const methods = [
+                    () => loadFromDirectoryListing(),
+                    () => loadFromCommonNames(),
+                    () => loadFromFileSystem()
                 ];
-                videos = sampleVideos;
-                saveVideos();
-                displayVideos();
+
+                for (const method of methods) {
+                    try {
+                        const result = await method();
+                        if (result > 0) {
+                            loadedCount = result;
+                            break;
+                        }
+                    } catch (e) {
+                        console.log('Method failed, trying next:', e.message);
+                    }
+                }
+
+                if (loadedCount > 0) {
+                    saveVideos();
+                    displayVideos();
+                    showSuccessMessage(loadedCount);
+                } else {
+                    throw new Error('No videos found');
+                }
+            } catch (error) {
+                console.error('All video loading methods failed:', error);
+                showNoVideosMessage();
+            }
+        }
+
+        async function loadFromDirectoryListing() {
+            // Try to get directory listing from server
+            const response = await fetch('./videos/', { 
+                method: 'GET',
+                headers: { 'Accept': 'text/html' }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Directory not accessible');
+            }
+
+            const html = await response.text();
+            const videoFiles = parseDirectoryListing(html);
+            
+            return await loadVideoFiles(videoFiles);
+        }
+
+        async function loadFromCommonNames() {
+            // Try common video file names
+            const commonNames = [
+                'video1.mp4', 'video2.mp4', 'video3.mp4', 'video4.mp4', 'video5.mp4',
+                'sample.mp4', 'test.mp4', 'demo.mp4', 'movie.mp4', 'clip.mp4',
+                'video1.webm', 'video2.webm', 'sample.webm', 'test.webm',
+                'video1.avi', 'video2.avi', 'sample.avi', 'test.avi'
+            ];
+
+            return await loadVideoFiles(commonNames);
+        }
+
+        async function loadFromFileSystem() {
+            // Try to use File System Access API if available
+            if ('window' in globalThis && 'showDirectoryPicker' in window) {
+                // This would require user interaction, so skip for automatic loading
+                throw new Error('File System API requires user interaction');
+            }
+            return 0;
+        }
+
+        async function loadVideoFiles(fileNames) {
+            let loadedCount = 0;
+
+            for (const fileName of fileNames) {
+                try {
+                    const response = await fetch(`./videos/${fileName}`);
+                    
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        
+                        // Check if it's actually a video file
+                        if (blob.type.startsWith('video/') || blob.size > 1000) {
+                            const videoUrl = `./videos/${fileName}`;
+                            const thumbnail = await generateThumbnailFromUrl(videoUrl);
+                            
+                            const video = {
+                                id: Date.now() + Math.random(),
+                                title: fileName.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
+                                views: Math.floor(Math.random() * 1000) + 100,
+                                likes: Math.floor(Math.random() * 100) + 10,
+                                comments: generateSampleComments(),
+                                uploadDate: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Random date within last 30 days
+                                thumbnail: thumbnail,
+                                src: videoUrl,
+                                fileName: fileName
+                            };
+                            
+                            videos.push(video);
+                            loadedCount++;
+                        }
+                    }
+                } catch (error) {
+                    // Silently skip files that can't be loaded
+                    console.log(`Could not load ${fileName}:`, error.message);
+                }
+            }
+
+            return loadedCount;
+        }
+
+        async function generateThumbnailFromUrl(videoUrl) {
+            return new Promise((resolve) => {
+                const video = document.createElement('video');
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                video.crossOrigin = 'anonymous';
+                video.muted = true;
+                
+                video.addEventListener('loadedmetadata', () => {
+                    canvas.width = 320;
+                    canvas.height = 180;
+                    
+                    // Seek to a few seconds in for better thumbnail
+                    video.currentTime = Math.min(video.duration * 0.1, 3);
+                });
+                
+                video.addEventListener('seeked', () => {
+                    try {
+                        ctx.drawImage(video, 0, 0, 320, 180);
+                        const thumbnail = canvas.toDataURL();
+                        resolve(thumbnail);
+                    } catch (e) {
+                        resolve(generateThumbnail(videoUrl.split('/').pop()));
+                    }
+                });
+                
+                video.addEventListener('error', () => {
+                    resolve(generateThumbnail(videoUrl.split('/').pop()));
+                });
+                
+                // Set timeout to prevent hanging
+                setTimeout(() => {
+                    resolve(generateThumbnail(videoUrl.split('/').pop()));
+                }, 5000);
+                
+                video.src = videoUrl;
+                video.load();
+            });
+        }
+
+        function parseDirectoryListing(html) {
+            const videoExtensions = ['.mp4', '.webm', '.avi', '.mov', '.mkv', '.wmv'];
+            const files = [];
+            
+            // Multiple regex patterns for different server directory listing formats
+            const patterns = [
+                /<a[^>]+href=["']([^"']+)["'][^>]*>([^<]+)<\/a>/gi, // Standard HTML links
+                /"name":"([^"]+)"/gi, // JSON format
+                /href="([^"]+)"/gi, // Simple href extraction
+            ];
+            
+            for (const pattern of patterns) {
+                let match;
+                pattern.lastIndex = 0; // Reset regex
+                
+                while ((match = pattern.exec(html)) !== null) {
+                    const fileName = match[1];
+                    
+                    // Skip parent directory links and directories
+                    if (fileName === '..' || fileName === '../' || fileName.endsWith('/')) {
+                        continue;
+                    }
+                    
+                    const hasVideoExtension = videoExtensions.some(ext => 
+                        fileName.toLowerCase().endsWith(ext)
+                    );
+                    
+                    if (hasVideoExtension && !fileName.includes('/') && !files.includes(fileName)) {
+                        files.push(fileName);
+                    }
+                }
+            }
+            
+            return files;
+        }
+
+        function showSuccessMessage(count) {
+            const uploadArea = document.querySelector('.upload-area');
+            uploadArea.innerHTML = `
+                <div style="color: #4CAF50; text-align: center;">
+                    <h3>✅ Automatically loaded ${count} videos!</h3>
+                    <p>Videos loaded from the "./videos/" directory</p>
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #404040;">
+                        <p style="color: #aaa; font-size: 14px;">
+                            Add more videos to the "videos" folder and refresh the page
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showNoVideosMessage() {
+            const uploadArea = document.querySelector('.upload-area');
+            uploadArea.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>📁 No "videos" directory found</h3>
+                    <p style="color: #ff6b6b;">To automatically load videos:</p>
+                    <ol style="text-align: left; max-width: 500px; margin: 20px auto; color: #ccc;">
+                        <li>Create a folder named "videos" in the same directory as this HTML file</li>
+                        <li>Add your video files (.mp4, .webm, .avi, etc.) to the "videos" folder</li>
+                        <li>Run this page from a local web server:
+                            <ul style="margin-top: 10px;">
+                                <li><code>python -m http.server 8000</code> (Python)</li>
+                                <li><code>npx http-server</code> (Node.js)</li>
+                                <li>Or use VS Code Live Server extension</li>
+                            </ul>
+                        </li>
+                        <li>Open <code>http://localhost:8000</code> in your browser</li>
+                    </ol>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #404040;">
+                        <h3>📁 Or manually upload videos</h3>
+                        <p>Drag and drop video files here</p>
+                        <input type="file" id="fileInput" accept="video/*" multiple style="display: none;">
+                    </div>
+                </div>
+            `;
+        }
+
+        async function tryCommonVideoFiles() {
+            // As a last resort, try to load some common video file names
+            const commonFiles = [
+                'sample.mp4', 'test.mp4', 'demo.mp4', 'video.mp4',
+                'movie.mp4', 'clip.mp4', 'example.mp4'
+            ];
+            
+            let found = 0;
+            for (const fileName of commonFiles) {
+                try {
+                    const response = await fetch(`./videos/${fileName}`, { method: 'HEAD' });
+                    if (response.ok) {
+                        found++;
+                    }
+                } catch (e) {
+                    // Ignore errors
+                }
+            }
+            
+            if (found === 0) {
+                showNoVideosMessage();
             }
         }
 
