@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VideoTube - Your Video Platform</title>
+    <title>VideoTube - Enhanced Video Platform</title>
     <style>
         * {
             margin: 0;
@@ -11,15 +11,33 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #242424;
+            --bg-hover: #2d2d2d;
+            --accent-red: #ff1744;
+            --accent-blue: #2196f3;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --text-muted: #666666;
+            --border: #404040;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --error: #f44336;
+        }
+
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #0f0f0f;
-            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #111111 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
         }
 
         .header {
-            background-color: #212121;
-            padding: 10px 20px;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -27,119 +45,291 @@
             top: 0;
             width: 100%;
             z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.5);
         }
 
         .logo {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            color: #ff0000;
+            background: linear-gradient(45deg, var(--accent-red), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .search-container {
             display: flex;
             flex: 1;
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 40px;
+            position: relative;
         }
 
         .search-input {
             flex: 1;
-            padding: 10px 16px;
-            border: 1px solid #323232;
-            background-color: #121212;
-            color: #fff;
-            border-radius: 20px 0 0 20px;
+            padding: 12px 50px 12px 20px;
+            border: 2px solid var(--border);
+            background: rgba(36, 36, 36, 0.8);
+            color: var(--text-primary);
+            border-radius: 25px;
             outline: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
         }
 
         .search-btn {
-            padding: 10px 20px;
-            background-color: #323232;
-            border: 1px solid #323232;
-            border-radius: 0 20px 20px 0;
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 8px 15px;
+            background: var(--accent-red);
+            border: none;
+            border-radius: 20px;
             cursor: pointer;
-            color: #fff;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
         }
 
         .search-btn:hover {
-            background-color: #404040;
+            background: #d32f2f;
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .header-info {
+            color: var(--text-secondary);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-loading {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-error {
+            background: var(--error);
+            color: white;
         }
 
         .main-content {
-            margin-top: 80px;
-            padding: 20px;
+            margin-top: 90px;
+            padding: 30px;
+        }
+
+        .upload-section {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-hover));
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 23, 68, 0.1), transparent);
+            transform: rotate(-45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+
+        .upload-section:hover {
+            border-color: var(--accent-red);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 23, 68, 0.2);
+        }
+
+        .upload-section:hover::before {
+            opacity: 1;
+            transform: rotate(-45deg) translateX(100%);
+        }
+
+        .upload-section.dragover {
+            border-color: var(--accent-blue);
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        .upload-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 25px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .filter-btn:hover::before {
+            left: 100%;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 23, 68, 0.3);
         }
 
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
             margin-bottom: 40px;
         }
 
         .video-card {
-            background-color: #1a1a1a;
-            border-radius: 12px;
+            background: var(--bg-card);
+            border-radius: 16px;
             overflow: hidden;
-            transition: transform 0.2s;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             cursor: pointer;
+            border: 1px solid transparent;
+            position: relative;
         }
 
         .video-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border-color: var(--accent-blue);
         }
 
         .video-thumbnail {
             width: 100%;
-            height: 180px;
+            height: 200px;
             object-fit: cover;
-            background-color: #333;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #333, #555);
+        }
+
+        .video-card:hover .video-thumbnail {
+            transform: scale(1.05);
         }
 
         .video-info {
-            padding: 12px;
+            padding: 20px;
         }
 
         .video-title {
             font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 8px;
-            line-height: 1.3;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.4;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            color: var(--text-primary);
         }
 
         .video-stats {
             font-size: 14px;
-            color: #aaa;
+            color: var(--text-secondary);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 15px;
         }
 
         .video-actions {
             display: flex;
             gap: 15px;
-            margin-top: 10px;
+            justify-content: space-between;
         }
 
         .action-btn {
             background: none;
-            border: none;
-            color: #aaa;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 12px;
-            transition: color 0.2s;
+            gap: 6px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            padding: 6px 12px;
+            border-radius: 15px;
+            flex: 1;
+            justify-content: center;
         }
 
-        .action-btn:hover, .action-btn.liked {
-            color: #ff0000;
+        .action-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        .action-btn.liked {
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+            background: rgba(255, 23, 68, 0.1);
         }
 
         .modal {
@@ -149,163 +339,257 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             z-index: 2000;
+            backdrop-filter: blur(5px);
         }
 
         .modal-content {
             position: relative;
-            margin: 50px auto;
-            width: 90%;
-            max-width: 1200px;
-            background-color: #1a1a1a;
-            border-radius: 12px;
+            margin: 40px auto;
+            width: 95%;
+            max-width: 1400px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
             overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            animation: modalSlideIn 0.4s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .video-player {
             width: 100%;
-            height: 400px;
-            background-color: #000;
+            height: 500px;
+            background: #000;
         }
 
         .video-details {
-            padding: 20px;
+            padding: 30px;
         }
 
         .close-btn {
             position: absolute;
-            top: 10px;
-            right: 15px;
-            background: none;
+            top: 15px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
             border: none;
-            color: #fff;
-            font-size: 24px;
+            color: white;
+            font-size: 28px;
             cursor: pointer;
             z-index: 2001;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--accent-red);
+            transform: rotate(90deg);
         }
 
         .comments-section {
-            margin-top: 20px;
-            border-top: 1px solid #333;
-            padding-top: 20px;
+            margin-top: 30px;
+            border-top: 2px solid var(--border);
+            padding-top: 25px;
         }
 
         .comment-form {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
         .comment-input {
             flex: 1;
-            padding: 10px;
-            background-color: #2a2a2a;
-            border: 1px solid #404040;
-            border-radius: 20px;
-            color: #fff;
+            padding: 15px 20px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 25px;
+            color: var(--text-primary);
             outline: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .comment-input:focus {
+            border-color: var(--accent-blue);
         }
 
         .comment-btn {
-            padding: 10px 20px;
-            background-color: #ff0000;
+            padding: 15px 25px;
+            background: var(--accent-red);
             color: white;
             border: none;
-            border-radius: 20px;
+            border-radius: 25px;
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .comment-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
         }
 
         .comment {
-            background-color: #2a2a2a;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            background: var(--bg-card);
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 3px solid var(--accent-blue);
         }
 
         .comment-author {
             font-weight: bold;
-            color: #fff;
-            margin-bottom: 5px;
+            color: var(--accent-blue);
+            margin-bottom: 8px;
         }
 
         .comment-text {
-            color: #ccc;
+            color: var(--text-secondary);
             font-size: 14px;
+            line-height: 1.5;
         }
 
-        .upload-area {
-            border: 2px dashed #404040;
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border);
+            border-radius: 50%;
+            border-top-color: var(--accent-blue);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .video-error {
+            background: var(--bg-card);
+            border: 2px solid var(--error);
             border-radius: 12px;
-            padding: 40px;
+            padding: 30px;
             text-align: center;
+            color: var(--text-primary);
+        }
+
+        .stats-bar {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
             margin-bottom: 20px;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-
-        .upload-area:hover {
-            border-color: #ff0000;
-        }
-
-        .upload-area.dragover {
-            border-color: #ff0000;
-            background-color: rgba(255,0,0,0.1);
-        }
-
-        .filters {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            justify-content: space-around;
+            text-align: center;
         }
 
-        .filter-btn {
-            padding: 8px 16px;
-            background-color: #2a2a2a;
-            border: 1px solid #404040;
-            border-radius: 20px;
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.2s;
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
-        .filter-btn:hover, .filter-btn.active {
-            background-color: #ff0000;
-            border-color: #ff0000;
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
         @media (max-width: 768px) {
             .video-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
             
             .search-container {
-                margin: 0 20px;
+                margin: 0 15px;
             }
             
             .modal-content {
-                width: 95%;
-                margin: 20px auto;
+                width: 98%;
+                margin: 10px auto;
+            }
+            
+            .video-player {
+                height: 250px;
+            }
+            
+            .filters {
+                gap: 10px;
+            }
+            
+            .filter-btn {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+            
+            .main-content {
+                padding: 20px 15px;
             }
         }
     </style>
 </head>
 <body>
     <header class="header">
-        <div class="logo">📹 VideoTube</div>
+        <div class="logo">
+            🎬 VideoTube
+        </div>
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Search videos..." id="searchInput">
             <button class="search-btn" onclick="searchVideos()">🔍</button>
         </div>
-        <div style="color: #aaa;">Welcome to VideoTube</div>
+        <div class="header-info">
+            <span id="statusIndicator" class="status-indicator status-loading">
+                <span class="loading-spinner"></span> Loading...
+            </span>
+            <span id="videoCount">0 videos</span>
+        </div>
     </header>
 
     <main class="main-content">
-        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-            <h3>📁 Drop video files here or click to upload</h3>
-            <p>Supported formats: MP4, WebM, AVI</p>
-            <input type="file" id="fileInput" accept="video/*" multiple style="display: none;">
+        <div class="upload-section" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-content">
+                <span class="upload-icon">📁</span>
+                <h3>Drop video files here or click to upload</h3>
+                <p>Supported formats: MP4, WebM, AVI, MOV, MKV, WMV</p>
+                <p style="margin-top: 15px; color: var(--text-muted); font-size: 14px;">
+                    Auto-scanning current directory and subdirectories for video files...
+                </p>
+                <input type="file" id="fileInput" accept="video/*" multiple style="display: none;">
+            </div>
+        </div>
+
+        <div class="stats-bar" id="statsBar" style="display: none;">
+            <div class="stat-item">
+                <div class="stat-value" id="totalVideos">0</div>
+                <div class="stat-label">Total Videos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalViews">0</div>
+                <div class="stat-label">Total Views</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalLikes">0</div>
+                <div class="stat-label">Total Likes</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="recentUploads">0</div>
+                <div class="stat-label">This Week</div>
+            </div>
         </div>
 
         <div class="filters">
@@ -313,6 +597,7 @@
             <button class="filter-btn" onclick="filterVideos('recent')">Recent</button>
             <button class="filter-btn" onclick="filterVideos('popular')">Most Popular</button>
             <button class="filter-btn" onclick="filterVideos('liked')">Liked</button>
+            <button class="filter-btn" onclick="filterVideos('folders')">By Folder</button>
         </div>
 
         <div class="video-grid" id="videoGrid"></div>
@@ -354,300 +639,330 @@
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
+            updateStatus('loading', 'Initializing...');
             initializeApp();
-            scanVideosDirectory();
+            scanAllDirectories();
             setupDragAndDrop();
         });
 
+        function updateStatus(type, message) {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.className = `status-indicator status-${type}`;
+            
+            if (type === 'loading') {
+                indicator.innerHTML = `<span class="loading-spinner"></span> ${message}`;
+            } else {
+                indicator.textContent = message;
+            }
+        }
+
+        function updateVideoCount() {
+            const count = videos.length;
+            document.getElementById('videoCount').textContent = `${count} video${count !== 1 ? 's' : ''}`;
+        }
+
+        function updateStats() {
+            const totalVideos = videos.length;
+            const totalViews = videos.reduce((sum, v) => sum + v.views, 0);
+            const totalLikes = videos.reduce((sum, v) => sum + v.likes, 0);
+            const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+            const recentUploads = videos.filter(v => new Date(v.uploadDate).getTime() > oneWeekAgo).length;
+
+            document.getElementById('totalVideos').textContent = totalVideos;
+            document.getElementById('totalViews').textContent = formatViews(totalViews);
+            document.getElementById('totalLikes').textContent = totalLikes;
+            document.getElementById('recentUploads').textContent = recentUploads;
+
+            if (totalVideos > 0) {
+                document.getElementById('statsBar').style.display = 'flex';
+            }
+        }
+
         function initializeApp() {
-            // Load videos from localStorage if available
-            const savedVideos = localStorage.getItem('videoTubeVideos');
-            if (savedVideos) {
-                videos = JSON.parse(savedVideos);
-                displayVideos();
+            // Load videos from memory if available (localStorage removed for Claude.ai compatibility)
+            displayVideos();
+            updateVideoCount();
+            updateStats();
+        }
+
+        async function scanAllDirectories() {
+            updateStatus('loading', 'Scanning for video files...');
+            
+            try {
+                let foundVideos = 0;
+                
+                // Enhanced scanning with multiple strategies
+                const scanStrategies = [
+                    () => scanCurrentDirectory(),
+                    () => scanCommonVideoDirectories(),
+                    () => scanWithFileExtensions(),
+                    () => attemptDeepScan()
+                ];
+
+                for (const strategy of scanStrategies) {
+                    try {
+                        const result = await strategy();
+                        foundVideos += result;
+                        if (foundVideos > 0) break;
+                    } catch (e) {
+                        console.log('Scan strategy failed:', e.message);
+                    }
+                }
+
+                if (foundVideos > 0) {
+                    updateStatus('success', `Found ${foundVideos} videos`);
+                    displayVideos();
+                    updateVideoCount();
+                    updateStats();
+                    updateUploadSection(true, foundVideos);
+                } else {
+                    updateStatus('error', 'No videos found');
+                    updateUploadSection(false, 0);
+                }
+            } catch (error) {
+                console.error('Comprehensive scan failed:', error);
+                updateStatus('error', 'Scan failed');
+                updateUploadSection(false, 0);
             }
         }
 
-        async function scanVideosDirectory() {
-            try {
-                // First try to load videos directly from the videos directory
-                await loadVideosFromServer();
-            } catch (error) {
-                console.log('Could not scan videos directory:', error);
-                // If that fails, try common video file names
-                await tryCommonVideoFiles();
-            }
-        }
+        async function scanCurrentDirectory() {
+            const videoExtensions = ['mp4', 'webm', 'avi', 'mov', 'mkv', 'wmv', 'm4v', 'flv'];
+            const commonPaths = [
+                './',
+                './videos/',
+                './media/',
+                './content/',
+                './assets/',
+                './files/',
+                '../videos/',
+                '../media/'
+            ];
+            
+            let totalFound = 0;
 
-        function addDirectorySelector() {
-            const uploadArea = document.querySelector('.upload-area');
-            uploadArea.innerHTML = `
-                <div>
-                    <h3>📁 Select Your Videos Directory</h3>
-                    <p>Click below to select your "videos" folder</p>
-                    <button onclick="selectVideosDirectory()" style="
-                        padding: 12px 24px;
-                        background-color: #ff0000;
-                        color: white;
-                        border: none;
-                        border-radius: 6px;
-                        cursor: pointer;
-                        margin: 10px;
-                        font-size: 16px;
-                    ">Select Videos Directory</button>
-                </div>
-                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #404040;">
-                    <h3>📁 Or drop video files here</h3>
-                    <p>Supported formats: MP4, WebM, AVI</p>
-                    <input type="file" id="fileInput" accept="video/*" multiple style="display: none;">
-                </div>
-            `;
-        }
-
-        async function selectVideosDirectory() {
-            try {
-                const dirHandle = await window.showDirectoryPicker();
-                await loadVideosFromDirectory(dirHandle);
-            } catch (error) {
-                if (error.name !== 'AbortError') {
-                    console.error('Error selecting directory:', error);
-                    alert('Could not access the directory. Please try uploading individual files instead.');
+            for (const basePath of commonPaths) {
+                try {
+                    // Try to fetch directory listing
+                    const response = await fetch(basePath, { 
+                        method: 'GET',
+                        headers: { 'Accept': 'text/html,application/json' }
+                    });
+                    
+                    if (response.ok) {
+                        const content = await response.text();
+                        const files = parseDirectoryListing(content);
+                        
+                        for (const file of files) {
+                            const hasVideoExtension = videoExtensions.some(ext => 
+                                file.toLowerCase().endsWith(`.${ext}`)
+                            );
+                            
+                            if (hasVideoExtension) {
+                                const videoUrl = basePath + file;
+                                const canLoad = await testVideoLoad(videoUrl);
+                                
+                                if (canLoad) {
+                                    const video = await createVideoObject(videoUrl, file, basePath);
+                                    videos.push(video);
+                                    totalFound++;
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {
+                    // Continue to next path
                 }
             }
+
+            return totalFound;
         }
 
-        async function loadVideosFromDirectory(dirHandle) {
-            const videoExtensions = ['.mp4', '.webm', '.avi', '.mov', '.mkv', '.wmv'];
-            let loadedCount = 0;
+        async function scanCommonVideoDirectories() {
+            const commonDirectories = [
+                'videos', 'media', 'content', 'assets', 'movies', 'clips', 'recordings'
+            ];
+            
+            let totalFound = 0;
+
+            for (const dir of commonDirectories) {
+                totalFound += await scanDirectoryForVideos(`./${dir}/`);
+            }
+
+            return totalFound;
+        }
+
+        async function scanWithFileExtensions() {
+            const videoExtensions = ['mp4', 'webm', 'avi', 'mov', 'mkv', 'wmv'];
+            const commonNames = [
+                'video', 'movie', 'clip', 'sample', 'test', 'demo', 'film', 'media',
+                'record', 'capture', 'screen', 'presentation'
+            ];
+            
+            let totalFound = 0;
+
+            // Try various combinations
+            for (const name of commonNames) {
+                for (const ext of videoExtensions) {
+                    for (let i = 1; i <= 10; i++) {
+                        const filename = `${name}${i > 1 ? i : ''}.${ext}`;
+                        
+                        try {
+                            const response = await fetch(`./${filename}`, { method: 'HEAD' });
+                            if (response.ok) {
+                                const video = await createVideoObject(`./${filename}`, filename, './');
+                                videos.push(video);
+                                totalFound++;
+                            }
+                        } catch (e) {
+                            // Continue
+                        }
+                    }
+                }
+            }
+
+            return totalFound;
+        }
+
+        async function attemptDeepScan() {
+            // Try to scan for video files using pattern matching
+            const patterns = [
+                /href="([^"]*\.(mp4|webm|avi|mov|mkv|wmv|m4v|flv))"/gi,
+                /"([^"]*\.(mp4|webm|avi|mov|mkv|wmv|m4v|flv))"/gi,
+                /src="([^"]*\.(mp4|webm|avi|mov|mkv|wmv|m4v|flv))"/gi
+            ];
+
+            let totalFound = 0;
 
             try {
-                for await (const entry of dirHandle.values()) {
-                    if (entry.kind === 'file') {
-                        const fileName = entry.name.toLowerCase();
-                        const hasVideoExtension = videoExtensions.some(ext => fileName.endsWith(ext));
-                        
-                        if (hasVideoExtension) {
+                const response = await fetch('./', { method: 'GET' });
+                if (response.ok) {
+                    const html = await response.text();
+                    
+                    for (const pattern of patterns) {
+                        let match;
+                        while ((match = pattern.exec(html)) !== null) {
+                            const videoPath = match[1];
+                            
                             try {
-                                const file = await entry.getFile();
-                                const videoId = Date.now() + Math.random();
-                                
-                                // Create thumbnail from video
-                                const thumbnail = await generateVideoThumbnail(file);
-                                
-                                const video = {
-                                    id: videoId,
-                                    title: entry.name.replace(/\.[^/.]+$/, ""),
-                                    views: Math.floor(Math.random() * 1000), // Random initial views
-                                    likes: Math.floor(Math.random() * 100),
-                                    comments: generateSampleComments(),
-                                    uploadDate: new Date(file.lastModified || Date.now()),
-                                    thumbnail: thumbnail,
-                                    src: URL.createObjectURL(file),
-                                    file: file,
-                                    fileName: entry.name
-                                };
-                                
-                                videos.push(video);
-                                loadedCount++;
-                            } catch (fileError) {
-                                console.error(`Error loading ${entry.name}:`, fileError);
+                                const testResponse = await fetch(videoPath, { method: 'HEAD' });
+                                if (testResponse.ok) {
+                                    const filename = videoPath.split('/').pop();
+                                    const directory = videoPath.replace(filename, '');
+                                    
+                                    const video = await createVideoObject(videoPath, filename, directory);
+                                    videos.push(video);
+                                    totalFound++;
+                                }
+                            } catch (e) {
+                                // Continue
                             }
                         }
                     }
                 }
-
-                if (loadedCount > 0) {
-                    saveVideos();
-                    displayVideos();
-                    
-                    // Update upload area to show success
-                    const uploadArea = document.querySelector('.upload-area');
-                    uploadArea.innerHTML = `
-                        <div style="color: #4CAF50;">
-                            <h3>✅ Successfully loaded ${loadedCount} videos!</h3>
-                            <p>Videos have been loaded from your directory</p>
-                            <button onclick="selectVideosDirectory()" style="
-                                padding: 8px 16px;
-                                background-color: #ff0000;
-                                color: white;
-                                border: none;
-                                border-radius: 4px;
-                                cursor: pointer;
-                                margin: 10px;
-                            ">Load More Videos</button>
-                        </div>
-                    `;
-                } else {
-                    alert('No video files found in the selected directory.');
-                }
-            } catch (error) {
-                console.error('Error reading directory:', error);
-                alert('Error reading the directory. Please try again.');
+            } catch (e) {
+                console.log('Deep scan failed:', e);
             }
+
+            return totalFound;
         }
 
-        async function generateVideoThumbnail(file) {
-            return new Promise((resolve) => {
-                const video = document.createElement('video');
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                video.addEventListener('loadedmetadata', () => {
-                    canvas.width = 320;
-                    canvas.height = 180;
-                    
-                    // Seek to 10% of the video duration for thumbnail
-                    video.currentTime = Math.min(video.duration * 0.1, 5);
-                });
-                
-                video.addEventListener('seeked', () => {
-                    ctx.drawImage(video, 0, 0, 320, 180);
-                    const thumbnail = canvas.toDataURL();
-                    URL.revokeObjectURL(video.src);
-                    resolve(thumbnail);
-                });
-                
-                video.addEventListener('error', () => {
-                    // Fallback to generated thumbnail
-                    resolve(generateThumbnail(file.name));
-                });
-                
-                video.src = URL.createObjectURL(file);
-                video.load();
-            });
-        }
-
-        async function loadVideosFromServer() {
-            const videoExtensions = ['mp4', 'webm', 'avi', 'mov', 'mkv', 'wmv'];
-            let loadedCount = 0;
+        async function scanDirectoryForVideos(dirPath) {
+            const videoExtensions = ['mp4', 'webm', 'avi', 'mov', 'mkv', 'wmv', 'm4v', 'flv'];
+            let foundCount = 0;
 
             try {
-                // Try different approaches to load videos
-                const methods = [
-                    () => loadFromDirectoryListing(),
-                    () => loadFromCommonNames(),
-                    () => loadFromFileSystem()
-                ];
-
-                for (const method of methods) {
-                    try {
-                        const result = await method();
-                        if (result > 0) {
-                            loadedCount = result;
-                            break;
-                        }
-                    } catch (e) {
-                        console.log('Method failed, trying next:', e.message);
-                    }
-                }
-
-                if (loadedCount > 0) {
-                    saveVideos();
-                    displayVideos();
-                    showSuccessMessage(loadedCount);
-                } else {
-                    throw new Error('No videos found');
-                }
-            } catch (error) {
-                console.error('All video loading methods failed:', error);
-                showNoVideosMessage();
-            }
-        }
-
-        async function loadFromDirectoryListing() {
-            // Try to get directory listing from server
-            const response = await fetch('./videos/', { 
-                method: 'GET',
-                headers: { 'Accept': 'text/html' }
-            });
-            
-            if (!response.ok) {
-                throw new Error('Directory not accessible');
-            }
-
-            const html = await response.text();
-            const videoFiles = parseDirectoryListing(html);
-            
-            return await loadVideoFiles(videoFiles);
-        }
-
-        async function loadFromCommonNames() {
-            // Try common video file names
-            const commonNames = [
-                'video1.mp4', 'video2.mp4', 'video3.mp4', 'video4.mp4', 'video5.mp4',
-                'sample.mp4', 'test.mp4', 'demo.mp4', 'movie.mp4', 'clip.mp4',
-                'video1.webm', 'video2.webm', 'sample.webm', 'test.webm',
-                'video1.avi', 'video2.avi', 'sample.avi', 'test.avi'
-            ];
-
-            return await loadVideoFiles(commonNames);
-        }
-
-        async function loadFromFileSystem() {
-            // Try to use File System Access API if available
-            if ('window' in globalThis && 'showDirectoryPicker' in window) {
-                // This would require user interaction, so skip for automatic loading
-                throw new Error('File System API requires user interaction');
-            }
-            return 0;
-        }
-
-        async function loadVideoFiles(fileNames) {
-            let loadedCount = 0;
-
-            for (const fileName of fileNames) {
-                try {
-                    // Test if the file exists and is accessible
-                    const response = await fetch(`./videos/${fileName}`, { method: 'HEAD' });
+                const response = await fetch(dirPath, { 
+                    method: 'GET',
+                    headers: { 'Accept': 'text/html' }
+                });
+                
+                if (response.ok) {
+                    const html = await response.text();
+                    const files = parseDirectoryListing(html);
                     
-                    if (response.ok) {
-                        // Get file info for better metadata
-                        const contentLength = response.headers.get('content-length');
-                        const contentType = response.headers.get('content-type');
-                        const lastModified = response.headers.get('last-modified');
+                    for (const file of files) {
+                        const hasVideoExtension = videoExtensions.some(ext => 
+                            file.toLowerCase().endsWith(`.${ext}`)
+                        );
                         
-                        // Verify it's actually a video file
-                        const isVideo = contentType && contentType.startsWith('video/');
-                        const hasVideoExtension = /\.(mp4|webm|avi|mov|mkv|wmv|m4v|flv)$/i.test(fileName);
-                        const hasReasonableSize = !contentLength || parseInt(contentLength) > 10000; // At least 10KB
-                        
-                        if ((isVideo || hasVideoExtension) && hasReasonableSize) {
-                            const videoUrl = `./videos/${fileName}`;
-                            
-                            // Test if the video can actually be loaded
+                        if (hasVideoExtension) {
+                            const videoUrl = dirPath + file;
                             const canLoad = await testVideoLoad(videoUrl);
                             
-                            const video = {
-                                id: Date.now() + Math.random(),
-                                title: fileName.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
-                                views: Math.floor(Math.random() * 1000) + 100,
-                                likes: Math.floor(Math.random() * 100) + 10,
-                                comments: generateSampleComments(),
-                                uploadDate: lastModified ? new Date(lastModified) : new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-                                thumbnail: canLoad ? await generateThumbnailFromUrl(videoUrl) : generateThumbnail(fileName),
-                                src: videoUrl,
-                                fileName: fileName,
-                                fileSize: contentLength ? parseInt(contentLength) : null,
-                                contentType: contentType,
-                                canPlay: canLoad
-                            };
-                            
-                            videos.push(video);
-                            loadedCount++;
-                            
-                            console.log(`Loaded video: ${fileName}`, {
-                                size: contentLength,
-                                type: contentType,
-                                canPlay: canLoad
-                            });
+                            if (canLoad) {
+                                const video = await createVideoObject(videoUrl, file, dirPath);
+                                videos.push(video);
+                                foundCount++;
+                            }
                         }
                     }
-                } catch (error) {
-                    console.log(`Could not load ${fileName}:`, error.message);
                 }
+            } catch (error) {
+                console.log(`Could not scan directory ${dirPath}:`, error);
             }
 
-            return loadedCount;
+            return foundCount;
+        }
+
+        async function createVideoObject(videoUrl, filename, directory) {
+            const response = await fetch(videoUrl, { method: 'HEAD' });
+            const contentLength = response.headers.get('content-length');
+            const contentType = response.headers.get('content-type');
+            const lastModified = response.headers.get('last-modified');
+            
+            return {
+                id: Date.now() + Math.random(),
+                title: filename.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
+                views: Math.floor(Math.random() * 2000) + 50,
+                likes: Math.floor(Math.random() * 200) + 5,
+                comments: generateSampleComments(),
+                uploadDate: lastModified ? new Date(lastModified) : new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
+                thumbnail: await generateThumbnailFromUrl(videoUrl),
+                src: videoUrl,
+                fileName: filename,
+                directory: directory,
+                fileSize: contentLength ? parseInt(contentLength) : null,
+                contentType: contentType,
+                canPlay: true
+            };
+        }
+
+        function parseDirectoryListing(html) {
+            const videoExtensions = ['.mp4', '.webm', '.avi', '.mov', '.mkv', '.wmv', '.m4v', '.flv'];
+            const files = [];
+            
+            // Multiple regex patterns for different server directory listing formats
+            const patterns = [
+                /<a[^>]+href=["']([^"']+)["'][^>]*>([^<]+)<\/a>/gi,
+                /"name":"([^"]+)"/gi,
+                /href="([^"]+)"/gi,
+                /<td><a href="([^"]+)">/gi
+            ];
+            
+            for (const pattern of patterns) {
+                let match;
+                pattern.lastIndex = 0;
+                
+                while ((match = pattern.exec(html)) !== null) {
+                    const fileName = match[1];
+                    
+                    // Skip parent directory links and directories
+                    if (fileName === '..' || fileName === '../' || fileName.endsWith('/') || fileName.startsWith('?')) {
+                        continue;
+                    }
+                    
+                    const hasVideoExtension = videoExtensions.some(ext => 
+                        fileName.toLowerCase().endsWith(ext)
+                    );
+                    
+                    if (hasVideoExtension && !fileName.includes('/') && !files.includes(fileName)) {
+                        files.push(fileName);
+                    }
+                }
+            }
+            
+            return [...new Set(files)]; // Remove duplicates
         }
 
         async function testVideoLoad(videoUrl) {
@@ -658,7 +973,7 @@
                 
                 const timeout = setTimeout(() => {
                     resolve(false);
-                }, 3000);
+                }, 5000);
                 
                 testVideo.addEventListener('loadedmetadata', () => {
                     clearTimeout(timeout);
@@ -686,48 +1001,42 @@
                 video.preload = 'metadata';
                 
                 const timeout = setTimeout(() => {
-                    // Fallback to generated thumbnail if video doesn't load
                     resolve(generateThumbnail(videoUrl.split('/').pop()));
-                }, 10000);
+                }, 8000);
                 
                 video.addEventListener('loadedmetadata', () => {
-                    canvas.width = 320;
-                    canvas.height = 180;
+                    canvas.width = 350;
+                    canvas.height = 200;
                     
-                    // Try to seek to 5% of duration or 2 seconds, whichever is smaller
-                    const seekTime = Math.min(video.duration * 0.05, 2);
-                    video.currentTime = Math.max(seekTime, 0.1);
+                    const seekTime = Math.min(video.duration * 0.1, 3);
+                    video.currentTime = Math.max(seekTime, 0.5);
                 });
                 
                 video.addEventListener('seeked', () => {
                     try {
-                        // Draw the video frame to canvas
-                        ctx.drawImage(video, 0, 0, 320, 180);
-                        const thumbnail = canvas.toDataURL('image/jpeg', 0.8);
+                        ctx.drawImage(video, 0, 0, 350, 200);
+                        const thumbnail = canvas.toDataURL('image/jpeg', 0.85);
                         
                         clearTimeout(timeout);
                         resolve(thumbnail);
                     } catch (e) {
-                        console.log('Canvas drawing error:', e);
                         clearTimeout(timeout);
                         resolve(generateThumbnail(videoUrl.split('/').pop()));
                     }
                 });
                 
-                video.addEventListener('error', (e) => {
-                    console.log('Video thumbnail generation error:', e);
+                video.addEventListener('error', () => {
                     clearTimeout(timeout);
                     resolve(generateThumbnail(videoUrl.split('/').pop()));
                 });
                 
                 video.addEventListener('loadeddata', () => {
-                    // If seeking doesn't work, try to capture the first frame
                     if (video.currentTime === 0) {
                         try {
-                            canvas.width = 320;
-                            canvas.height = 180;
-                            ctx.drawImage(video, 0, 0, 320, 180);
-                            const thumbnail = canvas.toDataURL('image/jpeg', 0.8);
+                            canvas.width = 350;
+                            canvas.height = 200;
+                            ctx.drawImage(video, 0, 0, 350, 200);
+                            const thumbnail = canvas.toDataURL('image/jpeg', 0.85);
                             
                             clearTimeout(timeout);
                             resolve(thumbnail);
@@ -742,155 +1051,163 @@
             });
         }
 
-        function parseDirectoryListing(html) {
-            const videoExtensions = ['.mp4', '.webm', '.avi', '.mov', '.mkv', '.wmv'];
-            const files = [];
-            
-            // Multiple regex patterns for different server directory listing formats
-            const patterns = [
-                /<a[^>]+href=["']([^"']+)["'][^>]*>([^<]+)<\/a>/gi, // Standard HTML links
-                /"name":"([^"]+)"/gi, // JSON format
-                /href="([^"]+)"/gi, // Simple href extraction
-            ];
-            
-            for (const pattern of patterns) {
-                let match;
-                pattern.lastIndex = 0; // Reset regex
-                
-                while ((match = pattern.exec(html)) !== null) {
-                    const fileName = match[1];
-                    
-                    // Skip parent directory links and directories
-                    if (fileName === '..' || fileName === '../' || fileName.endsWith('/')) {
-                        continue;
-                    }
-                    
-                    const hasVideoExtension = videoExtensions.some(ext => 
-                        fileName.toLowerCase().endsWith(ext)
-                    );
-                    
-                    if (hasVideoExtension && !fileName.includes('/') && !files.includes(fileName)) {
-                        files.push(fileName);
-                    }
-                }
-            }
-            
-            return files;
-        }
-
-        function showSuccessMessage(count) {
-            const uploadArea = document.querySelector('.upload-area');
-            uploadArea.innerHTML = `
-                <div style="color: #4CAF50; text-align: center;">
-                    <h3>✅ Automatically loaded ${count} videos!</h3>
-                    <p>Videos loaded from the "./videos/" directory</p>
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #404040;">
-                        <p style="color: #aaa; font-size: 14px;">
-                            Add more videos to the "videos" folder and refresh the page
-                        </p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function showNoVideosMessage() {
-            const uploadArea = document.querySelector('.upload-area');
-            uploadArea.innerHTML = `
-                <div style="text-align: center;">
-                    <h3>📁 No "videos" directory found</h3>
-                    <p style="color: #ff6b6b;">To automatically load videos:</p>
-                    <ol style="text-align: left; max-width: 500px; margin: 20px auto; color: #ccc;">
-                        <li>Create a folder named "videos" in the same directory as this HTML file</li>
-                        <li>Add your video files (.mp4, .webm, .avi, etc.) to the "videos" folder</li>
-                        <li>Run this page from a local web server:
-                            <ul style="margin-top: 10px;">
-                                <li><code>python -m http.server 8000</code> (Python)</li>
-                                <li><code>npx http-server</code> (Node.js)</li>
-                                <li>Or use VS Code Live Server extension</li>
-                            </ul>
-                        </li>
-                        <li>Open <code>http://localhost:8000</code> in your browser</li>
-                    </ol>
-                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #404040;">
-                        <h3>📁 Or manually upload videos</h3>
-                        <p>Drag and drop video files here</p>
-                        <input type="file" id="fileInput" accept="video/*" multiple style="display: none;">
-                    </div>
-                </div>
-            `;
-        }
-
-        async function tryCommonVideoFiles() {
-            // As a last resort, try to load some common video file names
-            const commonFiles = [
-                'sample.mp4', 'test.mp4', 'demo.mp4', 'video.mp4',
-                'movie.mp4', 'clip.mp4', 'example.mp4'
-            ];
-            
-            let found = 0;
-            for (const fileName of commonFiles) {
-                try {
-                    const response = await fetch(`./videos/${fileName}`, { method: 'HEAD' });
-                    if (response.ok) {
-                        found++;
-                    }
-                } catch (e) {
-                    // Ignore errors
-                }
-            }
-            
-            if (found === 0) {
-                showNoVideosMessage();
-            }
-        }
-
         function generateThumbnail(text) {
             const canvas = document.createElement('canvas');
-            canvas.width = 320;
-            canvas.height = 180;
+            canvas.width = 350;
+            canvas.height = 200;
             const ctx = canvas.getContext('2d');
             
-            // Create gradient background
-            const gradient = ctx.createLinearGradient(0, 0, 320, 180);
-            gradient.addColorStop(0, '#ff6b6b');
-            gradient.addColorStop(1, '#4ecdc4');
+            // Create modern gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 350, 200);
+            gradient.addColorStop(0, '#ff1744');
+            gradient.addColorStop(0.5, '#2196f3');
+            gradient.addColorStop(1, '#4caf50');
             ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 320, 180);
+            ctx.fillRect(0, 0, 350, 200);
             
-            // Add text
+            // Add overlay pattern
+            ctx.fillStyle = 'rgba(255,255,255,0.1)';
+            for (let i = 0; i < 350; i += 20) {
+                ctx.fillRect(i, 0, 1, 200);
+            }
+            
+            // Add text with shadow
+            ctx.shadowColor = 'rgba(0,0,0,0.7)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            
             ctx.fillStyle = 'white';
-            ctx.font = 'bold 16px Arial';
+            ctx.font = 'bold 18px Segoe UI';
             ctx.textAlign = 'center';
-            ctx.fillText(text, 160, 90);
+            ctx.fillText(text.length > 25 ? text.substring(0, 25) + '...' : text, 175, 90);
+            
+            // Add play icon
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.beginPath();
+            ctx.moveTo(175 - 15, 120);
+            ctx.lineTo(175 + 15, 135);
+            ctx.lineTo(175 - 15, 150);
+            ctx.closePath();
+            ctx.fill();
             
             return canvas.toDataURL();
         }
 
         function generateSampleComments() {
-            const comments = [
-                { author: "User123", text: "Great video! Really enjoyed watching this.", timestamp: new Date() },
-                { author: "VideoFan", text: "Amazing content, keep up the good work!", timestamp: new Date() },
-                { author: "Viewer42", text: "This was very informative, thanks for sharing.", timestamp: new Date() }
+            const commentPool = [
+                { author: "VideoEnthusiast", text: "This is amazing content! Really well done." },
+                { author: "MediaLover", text: "Great quality video, thanks for sharing!" },
+                { author: "ContentViewer", text: "Impressive work, looking forward to more." },
+                { author: "FilmFan", text: "Really enjoyed watching this, keep it up!" },
+                { author: "DigitalNomad", text: "Excellent production value on this one." },
+                { author: "TechReviewer", text: "The video quality is outstanding." },
+                { author: "CreativeUser", text: "This content is exactly what I was looking for." },
+                { author: "StreamWatcher", text: "Fantastic video, very informative!" }
             ];
-            return comments.slice(0, Math.floor(Math.random() * 3) + 1);
+            
+            const numComments = Math.floor(Math.random() * 4) + 1;
+            const selectedComments = [];
+            
+            for (let i = 0; i < numComments; i++) {
+                const comment = commentPool[Math.floor(Math.random() * commentPool.length)];
+                selectedComments.push({
+                    ...comment,
+                    timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000)
+                });
+            }
+            
+            return selectedComments;
+        }
+
+        function updateUploadSection(found, count) {
+            const uploadSection = document.querySelector('.upload-section');
+            
+            if (found) {
+                uploadSection.innerHTML = `
+                    <div class="upload-content">
+                        <span class="upload-icon">✅</span>
+                        <h3>Successfully found ${count} video${count !== 1 ? 's' : ''}!</h3>
+                        <p style="color: var(--success); margin: 15px 0;">
+                            Videos loaded from current directory and subdirectories
+                        </p>
+                        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                            <button onclick="scanAllDirectories()" style="
+                                padding: 10px 20px;
+                                background: var(--accent-blue);
+                                color: white;
+                                border: none;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-weight: 600;
+                            ">🔄 Rescan</button>
+                            <button onclick="document.getElementById('fileInput').click()" style="
+                                padding: 10px 20px;
+                                background: var(--accent-red);
+                                color: white;
+                                border: none;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-weight: 600;
+                            ">📁 Add More</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                uploadSection.innerHTML = `
+                    <div class="upload-content">
+                        <span class="upload-icon">📂</span>
+                        <h3>No videos found automatically</h3>
+                        <div style="background: var(--bg-card); padding: 20px; border-radius: 12px; margin: 20px 0; text-align: left;">
+                            <h4 style="color: var(--accent-blue); margin-bottom: 15px;">To automatically load videos:</h4>
+                            <ol style="color: var(--text-secondary); line-height: 1.8;">
+                                <li>Place video files (.mp4, .webm, .avi, etc.) in the same folder as this HTML file</li>
+                                <li>Or create subfolders like "videos/", "media/", "content/" and put videos there</li>
+                                <li>Serve this page from a local web server:
+                                    <ul style="margin: 10px 0 0 20px;">
+                                        <li><code>python -m http.server 8000</code></li>
+                                        <li><code>npx http-server</code></li>
+                                        <li>VS Code Live Server extension</li>
+                                    </ul>
+                                </li>
+                                <li>Access via <code>http://localhost:8000</code></li>
+                            </ol>
+                        </div>
+                        <p style="color: var(--text-primary); margin: 15px 0;">Or drag and drop video files here to upload manually</p>
+                        <button onclick="scanAllDirectories()" style="
+                            padding: 12px 24px;
+                            background: var(--accent-blue);
+                            color: white;
+                            border: none;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: 600;
+                            margin-top: 10px;
+                        ">🔄 Try Scanning Again</button>
+                        <input type="file" id="fileInput" accept="video/*" multiple style="display: none;">
+                    </div>
+                `;
+            }
         }
 
         function setupDragAndDrop() {
-            const uploadArea = document.querySelector('.upload-area');
+            const uploadSection = document.querySelector('.upload-section');
             const fileInput = document.getElementById('fileInput');
 
-            uploadArea.addEventListener('dragover', (e) => {
+            uploadSection.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                uploadArea.classList.add('dragover');
+                uploadSection.classList.add('dragover');
             });
 
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('dragover');
+            uploadSection.addEventListener('dragleave', (e) => {
+                if (!uploadSection.contains(e.relatedTarget)) {
+                    uploadSection.classList.remove('dragover');
+                }
             });
 
-            uploadArea.addEventListener('drop', (e) => {
+            uploadSection.addEventListener('drop', (e) => {
                 e.preventDefault();
-                uploadArea.classList.remove('dragover');
+                uploadSection.classList.remove('dragover');
                 handleFiles(e.dataTransfer.files);
             });
 
@@ -899,25 +1216,74 @@
             });
         }
 
-        function handleFiles(files) {
-            Array.from(files).forEach(file => {
-                if (file.type.startsWith('video/')) {
+        async function handleFiles(files) {
+            const validFiles = Array.from(files).filter(file => file.type.startsWith('video/'));
+            
+            if (validFiles.length === 0) {
+                alert('Please select valid video files.');
+                return;
+            }
+
+            updateStatus('loading', `Processing ${validFiles.length} files...`);
+
+            for (const file of validFiles) {
+                try {
+                    const thumbnail = await generateVideoThumbnail(file);
+                    
                     const video = {
                         id: Date.now() + Math.random(),
-                        title: file.name.replace(/\.[^/.]+$/, ""),
+                        title: file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
                         views: 0,
                         likes: 0,
                         comments: [],
                         uploadDate: new Date(),
-                        thumbnail: generateThumbnail(file.name),
+                        thumbnail: thumbnail,
                         src: URL.createObjectURL(file),
-                        file: file
+                        fileName: file.name,
+                        directory: 'uploaded',
+                        file: file,
+                        fileSize: file.size,
+                        contentType: file.type,
+                        canPlay: true
                     };
                     
                     videos.unshift(video);
-                    saveVideos();
-                    displayVideos();
+                } catch (error) {
+                    console.error(`Error processing ${file.name}:`, error);
                 }
+            }
+            
+            updateStatus('success', `Added ${validFiles.length} video${validFiles.length !== 1 ? 's' : ''}`);
+            displayVideos();
+            updateVideoCount();
+            updateStats();
+        }
+
+        async function generateVideoThumbnail(file) {
+            return new Promise((resolve) => {
+                const video = document.createElement('video');
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                video.addEventListener('loadedmetadata', () => {
+                    canvas.width = 350;
+                    canvas.height = 200;
+                    video.currentTime = Math.min(video.duration * 0.1, 2);
+                });
+                
+                video.addEventListener('seeked', () => {
+                    ctx.drawImage(video, 0, 0, 350, 200);
+                    const thumbnail = canvas.toDataURL('image/jpeg', 0.85);
+                    URL.revokeObjectURL(video.src);
+                    resolve(thumbnail);
+                });
+                
+                video.addEventListener('error', () => {
+                    resolve(generateThumbnail(file.name));
+                });
+                
+                video.src = URL.createObjectURL(file);
+                video.load();
             });
         }
 
@@ -928,8 +1294,21 @@
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             if (searchTerm) {
                 filteredVideos = filteredVideos.filter(video => 
-                    video.title.toLowerCase().includes(searchTerm)
+                    video.title.toLowerCase().includes(searchTerm) ||
+                    video.fileName.toLowerCase().includes(searchTerm) ||
+                    video.directory.toLowerCase().includes(searchTerm)
                 );
+            }
+
+            if (filteredVideos.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-secondary);">
+                        <div style="font-size: 48px; margin-bottom: 20px;">🎬</div>
+                        <h3>No videos found</h3>
+                        <p>Try adjusting your filters or search terms</p>
+                    </div>
+                `;
+                return;
             }
 
             grid.innerHTML = filteredVideos.map(video => `
@@ -941,6 +1320,9 @@
                             <span>${formatViews(video.views)} views</span>
                             <span>${formatDate(video.uploadDate)}</span>
                         </div>
+                        <div class="video-stats" style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
+                            📁 ${video.directory} ${video.fileSize ? `• ${formatFileSize(video.fileSize)}` : ''}
+                        </div>
                         <div class="video-actions">
                             <button class="action-btn ${isVideoLiked(video.id) ? 'liked' : ''}" onclick="event.stopPropagation(); quickLike(${video.id})">
                                 👍 ${video.likes}
@@ -948,11 +1330,18 @@
                             <button class="action-btn" onclick="event.stopPropagation(); openVideo(${video.id})">
                                 ▶️ Play
                             </button>
-                            ${video.canPlay === false ? '<span style="color: #ff6b6b; font-size: 12px;">⚠️ May not play</span>' : ''}
                         </div>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
         function filterVideosByType(videos, type) {
@@ -967,6 +1356,8 @@
                     return [...videos].sort((a, b) => b.views - a.views);
                 case 'liked':
                     return videos.filter(v => isVideoLiked(v.id));
+                case 'folders':
+                    return [...videos].sort((a, b) => a.directory.localeCompare(b.directory));
                 default:
                     return videos;
             }
@@ -983,7 +1374,7 @@
             displayVideos();
         }
 
-        // Add real-time search
+        // Real-time search
         document.getElementById('searchInput').addEventListener('input', displayVideos);
 
         function openVideo(videoId) {
@@ -992,43 +1383,28 @@
 
             currentVideo = video;
             
-            // Increment view count
             video.views++;
-            saveVideos();
+            updateStats();
             
-            // Update modal content
             document.getElementById('modalTitle').textContent = video.title;
             document.getElementById('modalViews').textContent = `${formatViews(video.views)} views`;
             document.getElementById('likeCount').textContent = video.likes;
             
             const modalVideo = document.getElementById('modalVideo');
-            
-            // Clear previous source and reset video
             modalVideo.src = '';
             modalVideo.load();
             
             if (video.src) {
-                // Set video source with error handling
                 modalVideo.src = video.src;
                 modalVideo.poster = video.thumbnail;
                 
-                // Add event listeners for debugging
-                modalVideo.addEventListener('loadstart', () => {
-                    console.log('Video loading started:', video.src);
-                });
-                
-                modalVideo.addEventListener('canplay', () => {
-                    console.log('Video can start playing');
-                });
-                
                 modalVideo.addEventListener('error', (e) => {
-                    console.error('Video error:', e, modalVideo.error);
+                    console.error('Video error:', e);
                     showVideoError();
                 });
                 
                 modalVideo.load();
             } else {
-                modalVideo.poster = video.thumbnail;
                 showVideoError();
             }
             
@@ -1041,20 +1417,16 @@
             const modalVideo = document.getElementById('modalVideo');
             modalVideo.style.display = 'none';
             
-            // Create error message if it doesn't exist
             let errorDiv = document.querySelector('.video-error');
             if (!errorDiv) {
                 errorDiv = document.createElement('div');
                 errorDiv.className = 'video-error';
                 errorDiv.style.cssText = `
                     width: 100%;
-                    height: 400px;
-                    background-color: #333;
+                    height: 500px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    flex-direction: column;
-                    color: #fff;
                 `;
                 modalVideo.parentNode.insertBefore(errorDiv, modalVideo.nextSibling);
             }
@@ -1062,14 +1434,9 @@
             errorDiv.innerHTML = `
                 <div style="text-align: center;">
                     <h3>⚠️ Video cannot be played</h3>
-                    <p>This might happen because:</p>
-                    <ul style="text-align: left; max-width: 400px;">
-                        <li>The video file format is not supported by your browser</li>
-                        <li>The video file is corrupted</li>
-                        <li>Network/server issues</li>
-                    </ul>
-                    <p style="margin-top: 15px; color: #aaa;">
-                        Video path: <code>${currentVideo?.src || 'Unknown'}</code>
+                    <p>The video file may be corrupted or in an unsupported format.</p>
+                    <p style="margin-top: 15px; color: var(--text-muted); font-size: 14px;">
+                        File: <code>${currentVideo?.fileName || 'Unknown'}</code>
                     </p>
                 </div>
             `;
@@ -1083,15 +1450,12 @@
             modalVideo.currentTime = 0;
             modalVideo.src = '';
             
-            // Hide error message if it exists
             const errorDiv = document.querySelector('.video-error');
             if (errorDiv) {
                 errorDiv.style.display = 'none';
             }
             
-            // Show video element again
             modalVideo.style.display = 'block';
-            
             currentVideo = null;
         }
 
@@ -1102,20 +1466,18 @@
             const videoIndex = videos.findIndex(v => v.id === currentVideo.id);
             
             if (isVideoLiked(currentVideo.id)) {
-                // Unlike
                 videos[videoIndex].likes--;
                 likedVideos.splice(likedVideos.indexOf(currentVideo.id), 1);
             } else {
-                // Like
                 videos[videoIndex].likes++;
                 likedVideos.push(currentVideo.id);
             }
             
-            localStorage.setItem('likedVideos', JSON.stringify(likedVideos));
-            saveVideos();
+            saveLikedVideos(likedVideos);
             updateLikeButton();
             document.getElementById('likeCount').textContent = videos[videoIndex].likes;
-            displayVideos(); // Refresh the grid
+            updateStats();
+            displayVideos();
         }
 
         function quickLike(videoId) {
@@ -1130,8 +1492,8 @@
                 likedVideos.push(videoId);
             }
             
-            localStorage.setItem('likedVideos', JSON.stringify(likedVideos));
-            saveVideos();
+            saveLikedVideos(likedVideos);
+            updateStats();
             displayVideos();
         }
 
@@ -1149,9 +1511,14 @@
             return likedVideos.includes(videoId);
         }
 
+        let likedVideosCache = [];
+
         function getLikedVideos() {
-            const saved = localStorage.getItem('likedVideos');
-            return saved ? JSON.parse(saved) : [];
+            return likedVideosCache;
+        }
+
+        function saveLikedVideos(likedVideos) {
+            likedVideosCache = likedVideos;
         }
 
         function addComment() {
@@ -1171,7 +1538,6 @@
             const videoIndex = videos.findIndex(v => v.id === currentVideo.id);
             videos[videoIndex].comments.unshift(comment);
             
-            saveVideos();
             commentInput.value = '';
             displayComments();
         }
@@ -1198,7 +1564,6 @@
                     url: window.location.href
                 });
             } else {
-                // Fallback: copy to clipboard
                 navigator.clipboard.writeText(`${currentVideo.title} - ${window.location.href}`);
                 alert('Video link copied to clipboard!');
             }
@@ -1224,15 +1589,6 @@
             if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
             if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
             return `${Math.floor(diffDays / 365)} years ago`;
-        }
-
-        function saveVideos() {
-            // Create a clean copy without file objects for storage
-            const videosToSave = videos.map(video => ({
-                ...video,
-                file: undefined // Remove file object as it can't be serialized
-            }));
-            localStorage.setItem('videoTubeVideos', JSON.stringify(videosToSave));
         }
 
         // Close modal when clicking outside
