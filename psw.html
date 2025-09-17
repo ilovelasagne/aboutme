@@ -1588,3 +1588,2005 @@
             </div>
             <div class="status-right">
                 <div class="progress-container" id="progressContainer">
+                    <span id="progressText">Processing...</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+                <span id="memoryUsage">Memory: 45MB</span>
+                <span id="performanceInfo">60 FPS</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menus -->
+    <div class="context-menu" id="canvasContextMenu">
+        <div class="context-menu-item" onclick="editor.cut()">Cut <span class="shortcut">Ctrl+X</span></div>
+        <div class="context-menu-item" onclick="editor.copy()">Copy <span class="shortcut">Ctrl+C</span></div>
+        <div class="context-menu-item" onclick="editor.paste()">Paste <span class="shortcut">Ctrl+V</span></div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item" onclick="editor.selectAll()">Select All <span class="shortcut">Ctrl+A</span></div>
+        <div class="context-menu-item" onclick="editor.deselectAll()">Deselect <span class="shortcut">Ctrl+D</span></div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item" onclick="editor.transformSelection()">Free Transform <span class="shortcut">Ctrl+T</span></div>
+    </div>
+
+    <div class="context-menu" id="layerContextMenu">
+        <div class="context-menu-item" onclick="editor.duplicateLayer()">Duplicate Layer</div>
+        <div class="context-menu-item" onclick="editor.deleteLayer()">Delete Layer</div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item" onclick="editor.rasterizeLayer()">Rasterize Layer</div>
+        <div class="context-menu-item" onclick="editor.mergeDown()">Merge Down</div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item" onclick="editor.layerProperties()">Layer Properties</div>
+    </div>
+
+    <!-- Hidden File Input -->
+    <input type="file" id="fileInput" accept="image/*" style="display: none;" multiple>
+
+    <!-- Modals -->
+    <div class="modal" id="newDocumentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">New Document</h3>
+                <button class="close-btn" onclick="closeModal('newDocumentModal')">×</button>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Document Name</label>
+                <input type="text" id="documentName" class="control-input" value="Untitled" placeholder="Document name">
+            </div>
+            <div class="advanced-controls">
+                <div class="control-group">
+                    <label class="control-label">Width</label>
+                    <input type="number" id="canvasWidth" class="control-input" value="800" placeholder="Width">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Height</label>
+                    <input type="number" id="canvasHeight" class="control-input" value="600" placeholder="Height">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Resolution (PPI)</label>
+                <input type="number" id="documentResolution" class="control-input" value="300" placeholder="Resolution">
+            </div>
+            <div class="control-group">
+                <label class="control-label">Background</label>
+                <select class="control-input" id="backgroundType">
+                    <option value="white">White</option>
+                    <option value="black">Black</option>
+                    <option value="transparent">Transparent</option>
+                    <option value="custom">Custom Color</option>
+                </select>
+            </div>
+            <div class="control-group" id="customBackgroundGroup" style="display: none;">
+                <input type="color" id="customBackground" class="color-picker" value="#ffffff">
+            </div>
+            <div class="advanced-controls" style="margin-top: 1rem;">
+                <button class="control-button" onclick="closeModal('newDocumentModal')">Cancel</button>
+                <button class="control-button" onclick="createNewDocument()" style="background: #60a5fa;">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="keyboardShortcutsModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Keyboard Shortcuts</h3>
+                <button class="close-btn" onclick="closeModal('keyboardShortcutsModal')">×</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; font-size: 0.85rem;">
+                <div>
+                    <h4 style="margin-bottom: 0.5rem; color: #60a5fa;">File Operations</h4>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+N</strong> - New Document</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+O</strong> - Open File</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+S</strong> - Save</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+E</strong> - Export</div>
+                    
+                    <h4 style="margin: 1rem 0 0.5rem; color: #60a5fa;">Edit Operations</h4>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+Z</strong> - Undo</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+Y</strong> - Redo</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+X</strong> - Cut</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+C</strong> - Copy</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+V</strong> - Paste</div>
+                    
+                    <h4 style="margin: 1rem 0 0.5rem; color: #60a5fa;">Selection</h4>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+A</strong> - Select All</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+D</strong> - Deselect</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+I</strong> - Inverse Selection</div>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 0.5rem; color: #60a5fa;">Tools</h4>
+                    <div style="margin-bottom: 0.5rem;"><strong>V</strong> - Select Tool</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>M</strong> - Move Tool</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>B</strong> - Brush Tool</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>E</strong> - Eraser Tool</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>C</strong> - Crop Tool</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>T</strong> - Text Tool</div>
+                    
+                    <h4 style="margin: 1rem 0 0.5rem; color: #60a5fa;">View</h4>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+0</strong> - Fit to Screen</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+1</strong> - Actual Size</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl++</strong> - Zoom In</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+-</strong> - Zoom Out</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>F11</strong> - Fullscreen</div>
+                    
+                    <h4 style="margin: 1rem 0 0.5rem; color: #60a5fa;">Layers</h4>
+                    <div style="margin-bottom: 0.5rem;"><strong>Shift+Ctrl+N</strong> - New Layer</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Ctrl+J</strong> - Duplicate Layer</div>
+                    <div style="margin-bottom: 0.5rem;"><strong>Delete</strong> - Delete Layer</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="aboutModal">
+        <div class="modal-content" style="text-align: center;">
+            <div class="modal-header">
+                <h3 class="modal-title">About PhotoShop Pro</h3>
+                <button class="close-btn" onclick="closeModal('aboutModal')">×</button>
+            </div>
+            <div style="font-size: 2rem; margin-bottom: 1rem;">🎨</div>
+            <h2 style="margin-bottom: 0.5rem;">PhotoShop Pro</h2>
+            <p style="color: #a0aec0; margin-bottom: 1rem;">Professional Photo Editor</p>
+            <p style="font-size: 0.85rem; color: #a0aec0; line-height: 1.5;">
+                A powerful, web-based photo editing application with professional-grade tools and features.
+                Built with modern web technologies for optimal performance and user experience.
+            </p>
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #4a5568; font-size: 0.8rem; color: #718096;">
+                Version 2.0.0 | Built with HTML5 Canvas
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class EnhancedPhotoEditor {
+            constructor() {
+                this.canvas = document.getElementById('canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.miniMapCanvas = document.getElementById('miniMapCanvas');
+                this.miniMapCtx = this.miniMapCanvas.getContext('2d');
+                this.curvesCanvas = document.getElementById('curvesCanvas');
+                this.curvesCtx = this.curvesCanvas.getContext('2d');
+                
+                this.currentTool = 'select';
+                this.zoom = 1;
+                this.isDrawing = false;
+                this.isPanning = false;
+                this.lastX = 0;
+                this.lastY = 0;
+                this.panStartX = 0;
+                this.panStartY = 0;
+                this.canvasOffsetX = 0;
+                this.canvasOffsetY = 0;
+                
+                this.history = [];
+                this.historyStep = -1;
+                this.maxHistorySteps = 50;
+                
+                this.layers = [];
+                this.currentLayer = 0;
+                
+                this.selection = null;
+                this.clipboard = null;
+                
+                this.brushSettings = {
+                    size: 10,
+                    hardness: 100,
+                    opacity: 100,
+                    flow: 100,
+                    spacing: 25,
+                    preset: 'round'
+                };
+                
+                this.adjustments = {
+                    brightness: 0,
+                    contrast: 0,
+                    saturation: 0,
+                    hue: 0,
+                    highlights: 0,
+                    shadows: 0,
+                    vibrance: 0,
+                    clarity: 0
+                };
+                
+                this.curves = {
+                    points: [{x: 0, y: 255}, {x: 255, y: 0}]
+                };
+                
+                this.performance = {
+                    fps: 0,
+                    frameCount: 0,
+                    lastTime: 0,
+                    memoryUsage: 0
+                };
+                
+                this.preferences = {
+                    showRulers: false,
+                    showGrid: false,
+                    showMiniMap: false,
+                    autoSave: true,
+                    theme: 'dark'
+                };
+                
+                this.initializeCanvas();
+                this.initializeEventListeners();
+                this.initializeCurves();
+                this.saveToHistory('New Document');
+                this.updateUI();
+                this.startPerformanceMonitoring();
+                this.loadPreferences();
+            }
+
+            initializeCanvas() {
+                this.canvas.width = 800;
+                this.canvas.height = 600;
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.imageSmoothingEnabled = true;
+                this.ctx.imageSmoothingQuality = 'high';
+                
+                // Initialize layers
+                this.layers = [{
+                    name: 'Background',
+                    visible: true,
+                    opacity: 100,
+                    blendMode: 'normal',
+                    type: 'image',
+                    canvas: this.createLayerCanvas(),
+                    locked: false
+                }];
+                
+                this.updateMiniMap();
+            }
+
+            createLayerCanvas() {
+                const layerCanvas = document.createElement('canvas');
+                layerCanvas.width = this.canvas.width;
+                layerCanvas.height = this.canvas.height;
+                const ctx = layerCanvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, layerCanvas.width, layerCanvas.height);
+                return layerCanvas;
+            }
+
+            initializeEventListeners() {
+                // Menu interactions
+                this.setupMenus();
+                
+                // Tool selection
+                document.querySelectorAll('.tool-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.selectTool(e.target.dataset.tool));
+                });
+
+                // Sidebar tabs
+                document.querySelectorAll('.sidebar-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
+                });
+
+                // File operations
+                document.getElementById('fileInput').addEventListener('change', (e) => this.loadImage(e));
+
+                // Canvas events
+                this.setupCanvasEvents();
+                
+                // Brush settings with live updates
+                this.setupBrushControls();
+                
+                // Color picker updates
+                this.setupColorControls();
+                
+                // Adjustment controls
+                this.setupAdjustmentControls();
+                
+                // Filter buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        if (e.target.dataset.filter) {
+                            this.applyFilter(e.target.dataset.filter);
+                        } else if (e.target.dataset.preset) {
+                            this.applyPreset(e.target.dataset.preset);
+                        }
+                    });
+                });
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+                
+                // Window events
+                window.addEventListener('resize', () => this.updateUI());
+                window.addEventListener('beforeunload', (e) => this.handleBeforeUnload(e));
+                
+                // Context menus
+                this.setupContextMenus();
+                
+                // Layer controls
+                this.setupLayerControls();
+            }
+
+            setupMenus() {
+                document.querySelectorAll('.menu-item').forEach(item => {
+                    item.addEventListener('mouseenter', (e) => {
+                        document.querySelectorAll('.menu-dropdown').forEach(dropdown => {
+                            dropdown.classList.remove('show');
+                        });
+                        const dropdown = e.target.querySelector('.menu-dropdown');
+                        if (dropdown) {
+                            dropdown.classList.add('show');
+                        }
+                    });
+                    
+                    item.addEventListener('mouseleave', () => {
+                        setTimeout(() => {
+                            const dropdown = item.querySelector('.menu-dropdown');
+                            if (dropdown && !dropdown.matches(':hover')) {
+                                dropdown.classList.remove('show');
+                            }
+                        }, 100);
+                    });
+                });
+            }
+
+            setupCanvasEvents() {
+                // Mouse events
+                this.canvas.addEventListener('mousedown', (e) => this.startAction(e));
+                this.canvas.addEventListener('mousemove', (e) => {
+                    this.updateMousePosition(e);
+                    this.performAction(e);
+                });
+                this.canvas.addEventListener('mouseup', () => this.endAction());
+                this.canvas.addEventListener('mouseout', () => this.endAction());
+                
+                // Wheel events for zoom
+                this.canvas.addEventListener('wheel', (e) => this.handleZoom(e));
+                
+                // Touch events for mobile
+                this.canvas.addEventListener('touchstart', (e) => this.handleTouch(e, 'start'));
+                this.canvas.addEventListener('touchmove', (e) => this.handleTouch(e, 'move'));
+                this.canvas.addEventListener('touchend', (e) => this.handleTouch(e, 'end'));
+                
+                // Context menu
+                this.canvas.addEventListener('contextmenu', (e) => this.showContextMenu(e, 'canvas'));
+            }
+
+            setupBrushControls() {
+                const controls = ['brushSize', 'brushHardness', 'brushOpacity', 'brushFlow', 'brushSpacing'];
+                controls.forEach(id => {
+                    const control = document.getElementById(id);
+                    const valueSpan = document.getElementById(id + 'Value');
+                    
+                    control.addEventListener('input', (e) => {
+                        const value = parseFloat(e.target.value);
+                        const property = id.replace('brush', '').toLowerCase();
+                        this.brushSettings[property] = value;
+                        valueSpan.textContent = value;
+                        this.updateBrushPreview();
+                    });
+                });
+
+                // Brush presets
+                document.querySelectorAll('.brush-preset').forEach(preset => {
+                    preset.addEventListener('click', (e) => {
+                        document.querySelectorAll('.brush-preset').forEach(p => p.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.brushSettings.preset = e.target.dataset.preset;
+                    });
+                });
+            }
+
+            setupColorControls() {
+                const foregroundColor = document.getElementById('foregroundColor');
+                const backgroundColor = document.getElementById('backgroundColor');
+                const foregroundValue = document.getElementById('foregroundValue');
+                const backgroundValue = document.getElementById('backgroundValue');
+                const foregroundIndicator = document.getElementById('foregroundIndicator');
+                const backgroundIndicator = document.getElementById('backgroundIndicator');
+
+                foregroundColor.addEventListener('input', (e) => {
+                    foregroundValue.textContent = e.target.value;
+                    foregroundIndicator.style.backgroundColor = e.target.value;
+                });
+
+                backgroundColor.addEventListener('input', (e) => {
+                    backgroundValue.textContent = e.target.value;
+                    backgroundIndicator.style.backgroundColor = e.target.value;
+                });
+
+                // Color swatches
+                document.querySelectorAll('.color-swatch').forEach(swatch => {
+                    swatch.addEventListener('click', (e) => {
+                        const color = e.target.dataset.color;
+                        foregroundColor.value = color;
+                        foregroundValue.textContent = color;
+                        foregroundIndicator.style.backgroundColor = color;
+                    });
+                });
+
+                // Initialize color indicators
+                foregroundIndicator.style.backgroundColor = foregroundColor.value;
+                backgroundIndicator.style.backgroundColor = backgroundColor.value;
+            }
+
+            setupAdjustmentControls() {
+                const adjustments = ['brightness', 'contrast', 'saturation', 'hue', 'highlights', 'shadows', 'vibrance', 'clarity'];
+                adjustments.forEach(id => {
+                    const control = document.getElementById(id);
+                    const valueSpan = document.getElementById(id + 'Value');
+                    
+                    if (control && valueSpan) {
+                        control.addEventListener('input', (e) => {
+                            const value = parseFloat(e.target.value);
+                            this.adjustments[id] = value;
+                            valueSpan.textContent = value;
+                            this.applyAdjustmentsPreview();
+                        });
+                    }
+                });
+
+                // Layer controls
+                const layerOpacity = document.getElementById('layerOpacity');
+                const layerOpacityValue = document.getElementById('layerOpacityValue');
+                const blendMode = document.getElementById('blendMode');
+
+                layerOpacity.addEventListener('input', (e) => {
+                    const value = parseFloat(e.target.value);
+                    layerOpacityValue.textContent = value;
+                    if (this.layers[this.currentLayer]) {
+                        this.layers[this.currentLayer].opacity = value;
+                        this.redrawCanvas();
+                    }
+                });
+
+                blendMode.addEventListener('change', (e) => {
+                    if (this.layers[this.currentLayer]) {
+                        this.layers[this.currentLayer].blendMode = e.target.value;
+                        this.redrawCanvas();
+                    }
+                });
+            }
+
+            setupContextMenus() {
+                document.addEventListener('click', () => {
+                    document.querySelectorAll('.context-menu').forEach(menu => {
+                        menu.classList.remove('show');
+                    });
+                });
+            }
+
+            setupLayerControls() {
+                // Layer visibility toggles
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('layer-visibility')) {
+                        const layerIndex = parseInt(e.target.closest('.layer-item').dataset.layer);
+                        this.toggleLayerVisibility(layerIndex);
+                    }
+                });
+
+                // Layer selection
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.layer-item')) {
+                        const layerIndex = parseInt(e.target.closest('.layer-item').dataset.layer);
+                        this.selectLayer(layerIndex);
+                    }
+                });
+            }
+
+            initializeCurves() {
+                this.curvesCanvas.width = 200;
+                this.curvesCanvas.height = 150;
+                this.drawCurves();
+                
+                this.curvesCanvas.addEventListener('click', (e) => this.addCurvePoint(e));
+                this.curvesCanvas.addEventListener('mousemove', (e) => this.dragCurvePoint(e));
+            }
+
+            startPerformanceMonitoring() {
+                const updatePerformance = () => {
+                    const now = performance.now();
+                    this.performance.frameCount++;
+                    
+                    if (now - this.performance.lastTime >= 1000) {
+                        this.performance.fps = this.performance.frameCount;
+                        this.performance.frameCount = 0;
+                        this.performance.lastTime = now;
+                        
+                        // Update performance display
+                        document.getElementById('performanceInfo').textContent = `${this.performance.fps} FPS`;
+                        
+                        // Estimate memory usage (simplified)
+                        const memoryEstimate = (this.canvas.width * this.canvas.height * 4 * this.layers.length) / (1024 * 1024);
+                        document.getElementById('memoryUsage').textContent = `Memory: ${memoryEstimate.toFixed(1)}MB`;
+                    }
+                    
+                    requestAnimationFrame(updatePerformance);
+                };
+                updatePerformance();
+            }
+
+            // Core functionality methods
+            selectTool(tool) {
+                if (!tool) return;
+                
+                this.currentTool = tool;
+                document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`[data-tool="${tool}"]`)?.classList.add('active');
+                document.getElementById('currentTool').textContent = tool.charAt(0).toUpperCase() + tool.slice(1);
+                
+                // Update cursor based on tool
+                const cursors = {
+                    select: 'default', move: 'move', brush: 'crosshair', pencil: 'crosshair',
+                    eraser: 'crosshair', clone: 'crosshair', healing: 'crosshair', blur: 'crosshair',
+                    sharpen: 'crosshair', smudge: 'crosshair', crop: 'crosshair', text: 'text',
+                    shape: 'crosshair', gradient: 'crosshair', bucket: 'crosshair', eyedropper: 'crosshair'
+                };
+                this.canvas.style.cursor = cursors[tool] || 'default';
+            }
+
+            switchTab(tabName) {
+                document.querySelectorAll('.sidebar-tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                document.getElementById(`${tabName}Tab`).classList.add('active');
+            }
+
+            getMousePos(e) {
+                const rect = this.canvas.getBoundingClientRect();
+                const scaleX = this.canvas.width / (rect.width * this.zoom);
+                const scaleY = this.canvas.height / (rect.height * this.zoom);
+                
+                return {
+                    x: ((e.clientX - rect.left) / this.zoom) + this.canvasOffsetX,
+                    y: ((e.clientY - rect.top) / this.zoom) + this.canvasOffsetY
+                };
+            }
+
+            updateMousePosition(e) {
+                const pos = this.getMousePos(e);
+                document.getElementById('mousePos').textContent = `${Math.round(pos.x)}, ${Math.round(pos.y)}`;
+            }
+
+            startAction(e) {
+                if (e.button === 1) { // Middle mouse button for panning
+                    this.isPanning = true;
+                    this.panStartX = e.clientX - this.canvasOffsetX;
+                    this.panStartY = e.clientY - this.canvasOffsetY;
+                    this.canvas.style.cursor = 'grabbing';
+                    return;
+                }
+                
+                if (e.button !== 0) return; // Only left mouse button for tools
+                
+                const pos = this.getMousePos(e);
+                this.lastX = pos.x;
+                this.lastY = pos.y;
+                
+                switch (this.currentTool) {
+                    case 'brush':
+                    case 'pencil':
+                    case 'eraser':
+                    case 'blur':
+                    case 'sharpen':
+                    case 'smudge':
+                    case 'clone':
+                    case 'healing':
+                    case 'airbrush':
+                    case 'watercolor':
+                        this.isDrawing = true;
+                        this.startStroke(pos);
+                        break;
+                    case 'bucket':
+                        this.floodFill(pos);
+                        break;
+                    case 'eyedropper':
+                        this.pickColor(pos);
+                        break;
+                    case 'text':
+                        this.addText(pos);
+                        break;
+                    case 'crop':
+                        this.startCrop(pos);
+                        break;
+                    case 'gradient':
+                        this.startGradient(pos);
+                        break;
+                    case 'select':
+                        this.startSelection(pos);
+                        break;
+                }
+            }
+
+            performAction(e) {
+                if (this.isPanning) {
+                    this.canvasOffsetX = e.clientX - this.panStartX;
+                    this.canvasOffsetY = e.clientY - this.panStartY;
+                    this.updateCanvasTransform();
+                    return;
+                }
+                
+                if (!this.isDrawing) return;
+                
+                const pos = this.getMousePos(e);
+                
+                switch (this.currentTool) {
+                    case 'brush':
+                        this.drawBrush(pos);
+                        break;
+                    case 'pencil':
+                        this.drawPencil(pos);
+                        break;
+                    case 'airbrush':
+                        this.drawAirbrush(pos);
+                        break;
+                    case 'watercolor':
+                        this.drawWatercolor(pos);
+                        break;
+                    case 'eraser':
+                        this.erase(pos);
+                        break;
+                    case 'blur':
+                        this.blurTool(pos);
+                        break;
+                    case 'sharpen':
+                        this.sharpenTool(pos);
+                        break;
+                    case 'smudge':
+                        this.smudgeTool(pos);
+                        break;
+                    case 'clone':
+                        this.cloneTool(pos);
+                        break;
+                    case 'healing':
+                        this.healingTool(pos);
+                        break;
+                }
+                
+                this.lastX = pos.x;
+                this.lastY = pos.y;
+            }
+
+            endAction() {
+                if (this.isPanning) {
+                    this.isPanning = false;
+                    this.canvas.style.cursor = 'default';
+                    return;
+                }
+                
+                if (this.isDrawing) {
+                    this.isDrawing = false;
+                    this.saveToHistory(`${this.currentTool} stroke`);
+                    this.updateMiniMap();
+                }
+            }
+
+            // Drawing methods
+            startStroke(pos) {
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                ctx.beginPath();
+                ctx.moveTo(pos.x, pos.y);
+            }
+
+            drawBrush(pos) {
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.globalAlpha = this.brushSettings.opacity / 100;
+                ctx.strokeStyle = document.getElementById('foregroundColor').value;
+                ctx.lineWidth = this.brushSettings.size;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                // Apply brush hardness
+                if (this.brushSettings.hardness < 100) {
+                    const gradient = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, this.brushSettings.size / 2);
+                    const hardness = this.brushSettings.hardness / 100;
+                    gradient.addColorStop(0, document.getElementById('foregroundColor').value);
+                    gradient.addColorStop(hardness, document.getElementById('foregroundColor').value);
+                    gradient.addColorStop(1, 'transparent');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, this.brushSettings.size / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.beginPath();
+                    ctx.moveTo(this.lastX, this.lastY);
+                    ctx.lineTo(pos.x, pos.y);
+                    ctx.stroke();
+                }
+                
+                this.redrawCanvas();
+            }
+
+            drawPencil(pos) {
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = document.getElementById('foregroundColor').value;
+                ctx.lineWidth = this.brushSettings.size;
+                ctx.lineCap = 'round';
+                
+                ctx.beginPath();
+                ctx.moveTo(this.lastX, this.lastY);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+                
+                this.redrawCanvas();
+            }
+
+            drawAirbrush(pos) {
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.globalAlpha = this.brushSettings.opacity / 200; // Softer opacity for airbrush
+                
+                const gradient = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, this.brushSettings.size);
+                gradient.addColorStop(0, document.getElementById('foregroundColor').value);
+                gradient.addColorStop(0.5, document.getElementById('foregroundColor').value);
+                gradient.addColorStop(1, 'transparent');
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, this.brushSettings.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                this.redrawCanvas();
+            }
+
+            drawWatercolor(pos) {
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                
+                ctx.globalCompositeOperation = 'multiply';
+                ctx.globalAlpha = this.brushSettings.opacity / 300;
+                
+                // Create multiple overlapping circles for watercolor effect
+                for (let i = 0; i < 5; i++) {
+                    const offsetX = (Math.random() - 0.5) * this.brushSettings.size * 0.5;
+                    const offsetY = (Math.random() - 0.5) * this.brushSettings.size * 0.5;
+                    const size = this.brushSettings.size * (0.5 + Math.random() * 0.5);
+                    
+                    const gradient = ctx.createRadialGradient(
+                        pos.x + offsetX, pos.y + offsetY, 0,
+                        pos.x + offsetX, pos.y + offsetY, size
+                    );
+                    gradient.addColorStop(0, document.getElementById('foregroundColor').value);
+                    gradient.addColorStop(0.7, document.getElementById('foregroundColor').value);
+                    gradient.addColorStop(1, 'transparent');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(pos.x + offsetX, pos.y + offsetY, size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                this.redrawCanvas();
+            }
+
+            erase(pos) {
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.globalAlpha = this.brushSettings.opacity / 100;
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, this.brushSettings.size / 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                this.redrawCanvas();
+            }
+
+            pickColor(pos) {
+                const imageData = this.ctx.getImageData(pos.x, pos.y, 1, 1);
+                const data = imageData.data;
+                const color = `#${((1 << 24) + (data[0] << 16) + (data[1] << 8) + data[2]).toString(16).slice(1)}`;
+                
+                document.getElementById('foregroundColor').value = color;
+                document.getElementById('foregroundValue').textContent = color;
+                document.getElementById('foregroundIndicator').style.backgroundColor = color;
+            }
+
+            floodFill(pos) {
+                const tolerance = 10;
+                const fillColor = this.hexToRgb(document.getElementById('foregroundColor').value);
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                const imageData = ctx.getImageData(0, 0, layerCanvas.width, layerCanvas.height);
+                
+                this.floodFillAlgorithm(imageData, Math.floor(pos.x), Math.floor(pos.y), fillColor, tolerance);
+                ctx.putImageData(imageData, 0, 0);
+                this.redrawCanvas();
+                this.saveToHistory('Fill');
+            }
+
+            addText(pos) {
+                const text = prompt('Enter text:', 'Sample Text');
+                if (!text) return;
+                
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                
+                ctx.font = `${this.brushSettings.size * 2}px Arial`;
+                ctx.fillStyle = document.getElementById('foregroundColor').value;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                ctx.fillText(text, pos.x, pos.y);
+                
+                this.redrawCanvas();
+                this.saveToHistory('Add Text');
+            }
+
+            // Layer management
+            addLayer(name = 'New Layer') {
+                const newLayer = {
+                    name: name,
+                    visible: true,
+                    opacity: 100,
+                    blendMode: 'normal',
+                    type: 'image',
+                    canvas: this.createLayerCanvas(),
+                    locked: false
+                };
+                
+                this.layers.push(newLayer);
+                this.currentLayer = this.layers.length - 1;
+                this.updateLayersUI();
+                this.saveToHistory('Add Layer');
+            }
+
+            duplicateLayer() {
+                if (this.layers[this.currentLayer]) {
+                    const sourceLayer = this.layers[this.currentLayer];
+                    const newCanvas = document.createElement('canvas');
+                    newCanvas.width = sourceLayer.canvas.width;
+                    newCanvas.height = sourceLayer.canvas.height;
+                    const ctx = newCanvas.getContext('2d');
+                    ctx.drawImage(sourceLayer.canvas, 0, 0);
+                    
+                    const newLayer = {
+                        name: sourceLayer.name + ' copy',
+                        visible: sourceLayer.visible,
+                        opacity: sourceLayer.opacity,
+                        blendMode: sourceLayer.blendMode,
+                        type: sourceLayer.type,
+                        canvas: newCanvas,
+                        locked: false
+                    };
+                    
+                    this.layers.splice(this.currentLayer + 1, 0, newLayer);
+                    this.currentLayer++;
+                    this.updateLayersUI();
+                    this.redrawCanvas();
+                    this.saveToHistory('Duplicate Layer');
+                }
+            }
+
+            deleteLayer() {
+                if (this.layers.length > 1) {
+                    this.layers.splice(this.currentLayer, 1);
+                    this.currentLayer = Math.max(0, this.currentLayer - 1);
+                    this.updateLayersUI();
+                    this.redrawCanvas();
+                    this.saveToHistory('Delete Layer');
+                }
+            }
+
+            selectLayer(index) {
+                if (index >= 0 && index < this.layers.length) {
+                    this.currentLayer = index;
+                    this.updateLayersUI();
+                    
+                    // Update layer properties UI
+                    const layer = this.layers[index];
+                    document.getElementById('layerOpacity').value = layer.opacity;
+                    document.getElementById('layerOpacityValue').textContent = layer.opacity;
+                    document.getElementById('blendMode').value = layer.blendMode;
+                }
+            }
+
+            toggleLayerVisibility(index) {
+                if (this.layers[index]) {
+                    this.layers[index].visible = !this.layers[index].visible;
+                    this.updateLayersUI();
+                    this.redrawCanvas();
+                }
+            }
+
+            updateLayersUI() {
+                const layersList = document.getElementById('layersList');
+                layersList.innerHTML = '';
+                
+                this.layers.slice().reverse().forEach((layer, reverseIndex) => {
+                    const index = this.layers.length - 1 - reverseIndex;
+                    const layerItem = document.createElement('div');
+                    layerItem.className = `layer-item ${index === this.currentLayer ? 'active' : ''}`;
+                    layerItem.dataset.layer = index;
+                    
+                    layerItem.innerHTML = `
+                        <div class="layer-visibility">${layer.visible ? '👁️' : '🙈'}</div>
+                        <div class="layer-preview"></div>
+                        <div class="layer-info">
+                            <div class="layer-name">${layer.name}</div>
+                            <div class="layer-type">${layer.type} • </div>
+                            <div class="layer-blend">${layer.blendMode} • ${layer.opacity}%</div>
+                        </div>
+                    `;
+                    
+                    layersList.appendChild(layerItem);
+                });
+            }
+
+            redrawCanvas() {
+                // Clear main canvas
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Composite all visible layers
+                this.layers.forEach((layer) => {
+                    if (layer.visible) {
+                        this.ctx.save();
+                        this.ctx.globalAlpha = layer.opacity / 100;
+                        this.ctx.globalCompositeOperation = this.getCompositeOperation(layer.blendMode);
+                        this.ctx.drawImage(layer.canvas, 0, 0);
+                        this.ctx.restore();
+                    }
+                });
+            }
+
+            getCompositeOperation(blendMode) {
+                const operations = {
+                    'normal': 'source-over',
+                    'multiply': 'multiply',
+                    'screen': 'screen',
+                    'overlay': 'overlay',
+                    'soft-light': 'soft-light',
+                    'hard-light': 'hard-light',
+                    'color-dodge': 'color-dodge',
+                    'color-burn': 'color-burn',
+                    'darken': 'darken',
+                    'lighten': 'lighten',
+                    'difference': 'difference',
+                    'exclusion': 'exclusion'
+                };
+                return operations[blendMode] || 'source-over';
+            }
+
+            // Filter implementations
+            applyFilter(filterType) {
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                const imageData = ctx.getImageData(0, 0, layerCanvas.width, layerCanvas.height);
+                let filtered;
+
+                this.showProgress(`Applying ${filterType} filter...`);
+
+                switch (filterType) {
+                    case 'grayscale': filtered = this.grayscaleFilter(imageData); break;
+                    case 'sepia': filtered = this.sepiaFilter(imageData); break;
+                    case 'vintage': filtered = this.vintageFilter(imageData); break;
+                    case 'blur': filtered = this.gaussianBlur(imageData, 3); break;
+                    case 'sharpen': filtered = this.sharpenFilter(imageData); break;
+                    case 'emboss': filtered = this.embossFilter(imageData); break;
+                    case 'edge': filtered = this.edgeDetectionFilter(imageData); break;
+                    case 'noise': filtered = this.noiseFilter(imageData); break;
+                    case 'pixelate': filtered = this.pixelateFilter(imageData, 8); break;
+                    case 'oil': filtered = this.oilPaintingFilter(imageData); break;
+                    case 'invert': filtered = this.invertFilter(imageData); break;
+                    case 'cartoon': filtered = this.cartoonFilter(imageData); break;
+                    case 'sketch': filtered = this.sketchFilter(imageData); break;
+                    case 'watercolor': filtered = this.watercolorFilter(imageData); break;
+                    case 'enhance': filtered = this.autoEnhanceFilter(imageData); break;
+                    case 'denoise': filtered = this.denoiseFilter(imageData); break;
+                    case 'wave': filtered = this.waveFilter(imageData); break;
+                    case 'twirl': filtered = this.twirlFilter(imageData); break;
+                }
+
+                if (filtered) {
+                    ctx.putImageData(filtered, 0, 0);
+                    this.redrawCanvas();
+                    this.saveToHistory(`Apply ${filterType} filter`);
+                    this.updateMiniMap();
+                }
+
+                this.hideProgress();
+            }
+
+            // Enhanced filter implementations
+            grayscaleFilter(imageData) {
+                const data = imageData.data;
+                for (let i = 0; i < data.length; i += 4) {
+                    const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+                    data[i] = gray;
+                    data[i + 1] = gray;
+                    data[i + 2] = gray;
+                }
+                return imageData;
+            }
+
+            sepiaFilter(imageData) {
+                const data = imageData.data;
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i], g = data[i + 1], b = data[i + 2];
+                    data[i] = Math.min(255, (r * 0.393) + (g * 0.769) + (b * 0.189));
+                    data[i + 1] = Math.min(255, (r * 0.349) + (g * 0.686) + (b * 0.168));
+                    data[i + 2] = Math.min(255, (r * 0.272) + (g * 0.534) + (b * 0.131));
+                }
+                return imageData;
+            }
+
+            cartoonFilter(imageData) {
+                // Apply edge detection first
+                const edges = this.edgeDetectionFilter(JSON.parse(JSON.stringify(imageData)));
+                // Then apply color quantization
+                const quantized = this.quantizeColors(imageData, 8);
+                
+                // Combine edge and quantized data
+                const data = quantized.data;
+                const edgeData = edges.data;
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    const edgeIntensity = edgeData[i] / 255;
+                    data[i] = Math.max(0, data[i] - edgeIntensity * 100);
+                    data[i + 1] = Math.max(0, data[i + 1] - edgeIntensity * 100);
+                    data[i + 2] = Math.max(0, data[i + 2] - edgeIntensity * 100);
+                }
+                
+                return quantized;
+            }
+
+            quantizeColors(imageData, levels) {
+                const data = imageData.data;
+                const factor = 255 / (levels - 1);
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    data[i] = Math.round(data[i] / factor) * factor;
+                    data[i + 1] = Math.round(data[i + 1] / factor) * factor;
+                    data[i + 2] = Math.round(data[i + 2] / factor) * factor;
+                }
+                
+                return imageData;
+            }
+
+            invertFilter(imageData) {
+                const data = imageData.data;
+                for (let i = 0; i < data.length; i += 4) {
+                    data[i] = 255 - data[i];
+                    data[i + 1] = 255 - data[i + 1];
+                    data[i + 2] = 255 - data[i + 2];
+                }
+                return imageData;
+            }
+
+            // Zoom and view controls
+            handleZoom(e) {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                const newZoom = Math.max(0.1, Math.min(10, this.zoom * delta));
+                
+                // Calculate zoom center point
+                const rect = this.canvas.getBoundingClientRect();
+                const centerX = (e.clientX - rect.left) / rect.width;
+                const centerY = (e.clientY - rect.top) / rect.height;
+                
+                // Adjust offset to zoom towards mouse position
+                this.canvasOffsetX += (centerX - 0.5) * this.canvas.width * (this.zoom - newZoom);
+                this.canvasOffsetY += (centerY - 0.5) * this.canvas.height * (this.zoom - newZoom);
+                
+                this.zoom = newZoom;
+                this.updateZoom();
+            }
+
+            zoomIn() {
+                this.zoom = Math.min(10, this.zoom * 1.2);
+                this.updateZoom();
+            }
+
+            zoomOut() {
+                this.zoom = Math.max(0.1, this.zoom * 0.8);
+                this.updateZoom();
+            }
+
+            updateZoom() {
+                this.updateCanvasTransform();
+                const zoomPercent = Math.round(this.zoom * 100);
+                document.getElementById('zoomLevel').textContent = `${zoomPercent}%`;
+                document.getElementById('currentZoom').textContent = `${zoomPercent}%`;
+            }
+
+            updateCanvasTransform() {
+                this.canvas.style.transform = `translate(${this.canvasOffsetX}px, ${this.canvasOffsetY}px) scale(${this.zoom})`;
+            }
+
+            fitToScreen() {
+                const container = document.getElementById('canvasContainer');
+                const scaleX = (container.clientWidth - 40) / this.canvas.width;
+                const scaleY = (container.clientHeight - 40) / this.canvas.height;
+                this.zoom = Math.min(scaleX, scaleY);
+                this.canvasOffsetX = 0;
+                this.canvasOffsetY = 0;
+                this.updateZoom();
+            }
+
+            actualSize() {
+                this.zoom = 1;
+                this.canvasOffsetX = 0;
+                this.canvasOffsetY = 0;
+                this.updateZoom();
+            }
+
+            // File operations
+            newDocument() {
+                this.openModal('newDocumentModal');
+            }
+
+            openFile() {
+                document.getElementById('fileInput').click();
+            }
+
+            loadImage(event) {
+                const files = Array.from(event.target.files);
+                if (!files.length) return;
+                
+                files.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            if (index === 0) {
+                                // First image replaces canvas
+                                this.canvas.width = img.width;
+                                this.canvas.height = img.height;
+                                this.layers = [{
+                                    name: 'Background',
+                                    visible: true,
+                                    opacity: 100,
+                                    blendMode: 'normal',
+                                    type: 'image',
+                                    canvas: this.createLayerCanvas(),
+                                    locked: false
+                                }];
+                                const ctx = this.layers[0].canvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0);
+                            } else {
+                                // Additional images become new layers
+                                const newCanvas = document.createElement('canvas');
+                                newCanvas.width = this.canvas.width;
+                                newCanvas.height = this.canvas.height;
+                                const ctx = newCanvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
+                                
+                                this.layers.push({
+                                    name: `Image ${index + 1}`,
+                                    visible: true,
+                                    opacity: 100,
+                                    blendMode: 'normal',
+                                    type: 'image',
+                                    canvas: newCanvas,
+                                    locked: false
+                                });
+                            }
+                            
+                            this.currentLayer = 0;
+                            this.redrawCanvas();
+                            this.updateLayersUI();
+                            this.saveToHistory('Load Image');
+                            this.updateUI();
+                            this.updateMiniMap();
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            saveFile() {
+                const projectData = {
+                    name: document.getElementById('documentName')?.value || 'Untitled',
+                    canvas: this.canvas.toDataURL(),
+                    width: this.canvas.width,
+                    height: this.canvas.height,
+                    layers: this.layers.map(layer => ({
+                        name: layer.name,
+                        visible: layer.visible,
+                        opacity: layer.opacity,
+                        blendMode: layer.blendMode,
+                        type: layer.type,
+                        data: layer.canvas.toDataURL(),
+                        locked: layer.locked
+                    })),
+                    history: this.history.slice(-10), // Save last 10 history items
+                    adjustments: this.adjustments,
+                    version: '2.0.0'
+                };
+                
+                const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+                this.downloadBlob(blob, `${projectData.name}.psp`);
+            }
+
+            exportFile() {
+                const format = prompt('Export format (png/jpg/webp):', 'png') || 'png';
+                const quality = format === 'jpg' ? 0.9 : 1.0;
+                const link = document.createElement('a');
+                link.download = `export.${format}`;
+                link.href = this.canvas.toDataURL(`image/${format}`, quality);
+                link.click();
+            }
+
+            downloadBlob(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            // History management
+            saveToHistory(action) {
+                this.historyStep++;
+                if (this.historyStep < this.history.length) {
+                    this.history.length = this.historyStep;
+                }
+                
+                this.history.push({
+                    action: action,
+                    timestamp: Date.now(),
+                    layers: this.layers.map(layer => ({
+                        ...layer,
+                        canvas: this.cloneCanvas(layer.canvas)
+                    })),
+                    canvasWidth: this.canvas.width,
+                    canvasHeight: this.canvas.height
+                });
+                
+                // Limit history
+                if (this.history.length > this.maxHistorySteps) {
+                    this.history.shift();
+                    this.historyStep--;
+                }
+                
+                this.updateHistoryUI();
+                this.updateUndoRedoButtons();
+            }
+
+            cloneCanvas(originalCanvas) {
+                const clonedCanvas = document.createElement('canvas');
+                clonedCanvas.width = originalCanvas.width;
+                clonedCanvas.height = originalCanvas.height;
+                const ctx = clonedCanvas.getContext('2d');
+                ctx.drawImage(originalCanvas, 0, 0);
+                return clonedCanvas;
+            }
+
+            undo() {
+                if (this.historyStep > 0) {
+                    this.restoreFromHistory(this.historyStep - 1);
+                }
+            }
+
+            redo() {
+                if (this.historyStep < this.history.length - 1) {
+                    this.restoreFromHistory(this.historyStep + 1);
+                }
+            }
+
+            restoreFromHistory(step) {
+                if (step >= 0 && step < this.history.length) {
+                    const historyItem = this.history[step];
+                    this.historyStep = step;
+                    
+                    // Restore canvas dimensions
+                    this.canvas.width = historyItem.canvasWidth;
+                    this.canvas.height = historyItem.canvasHeight;
+                    
+                    // Restore layers
+                    this.layers = historyItem.layers.map(layer => ({
+                        ...layer,
+                        canvas: this.cloneCanvas(layer.canvas)
+                    }));
+                    
+                    this.redrawCanvas();
+                    this.updateLayersUI();
+                    this.updateHistoryUI();
+                    this.updateUndoRedoButtons();
+                    this.updateUI();
+                }
+            }
+
+            updateHistoryUI() {
+                const panel = document.getElementById('historyPanel');
+                panel.innerHTML = '';
+                
+                this.history.slice(-10).forEach((item, index) => {
+                    const actualIndex = this.history.length - 10 + index;
+                    const div = document.createElement('div');
+                    div.className = `layer-item ${actualIndex === this.historyStep ? 'active' : ''}`;
+                    div.style.cssText = 'padding: 0.25rem 0.5rem; font-size: 0.75rem; cursor: pointer;';
+                    div.innerHTML = `<div class="layer-info"><div class="layer-name">${item.action}</div></div>`;
+                    div.addEventListener('click', () => this.restoreFromHistory(actualIndex));
+                    panel.appendChild(div);
+                });
+            }
+
+            updateUndoRedoButtons() {
+                document.getElementById('undoBtn').style.opacity = this.historyStep > 0 ? '1' : '0.5';
+                document.getElementById('redoBtn').style.opacity = this.historyStep < this.history.length - 1 ? '1' : '0.5';
+            }
+
+            // UI updates and utilities
+            updateUI() {
+                document.getElementById('canvasSize').textContent = `${this.canvas.width} × ${this.canvas.height}`;
+                this.updateMiniMap();
+            }
+
+            updateMiniMap() {
+                if (!this.preferences.showMiniMap) return;
+                
+                const miniMap = document.getElementById('miniMap');
+                const miniCanvas = this.miniMapCanvas;
+                const scale = Math.min(120 / this.canvas.width, 90 / this.canvas.height);
+                
+                miniCanvas.width = this.canvas.width * scale;
+                miniCanvas.height = this.canvas.height * scale;
+                
+                this.miniMapCtx.clearRect(0, 0, miniCanvas.width, miniCanvas.height);
+                this.miniMapCtx.drawImage(this.canvas, 0, 0, miniCanvas.width, miniCanvas.height);
+            }
+
+            showProgress(text) {
+                const container = document.getElementById('progressContainer');
+                const textEl = document.getElementById('progressText');
+                textEl.textContent = text;
+                container.style.display = 'flex';
+            }
+
+            hideProgress() {
+                document.getElementById('progressContainer').style.display = 'none';
+            }
+
+            // Modal management
+            openModal(modalId) {
+                document.getElementById(modalId).classList.add('open');
+            }
+
+            closeModal(modalId) {
+                document.getElementById(modalId).classList.remove('open');
+            }
+
+            showContextMenu(e, type) {
+                e.preventDefault();
+                const contextMenu = document.getElementById(`${type}ContextMenu`);
+                contextMenu.style.left = e.clientX + 'px';
+                contextMenu.style.top = e.clientY + 'px';
+                contextMenu.classList.add('show');
+            }
+
+            // Advanced features
+            toggleRulers() {
+                this.preferences.showRulers = !this.preferences.showRulers;
+                document.getElementById('canvasContainer').classList.toggle('rulers-visible', this.preferences.showRulers);
+            }
+
+            toggleGrid() {
+                this.preferences.showGrid = !this.preferences.showGrid;
+                // Grid implementation would go here
+            }
+
+            toggleMiniMap() {
+                this.preferences.showMiniMap = !this.preferences.showMiniMap;
+                document.getElementById('miniMap').classList.toggle('show', this.preferences.showMiniMap);
+                if (this.preferences.showMiniMap) this.updateMiniMap();
+            }
+
+            toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
+            // Keyboard shortcuts
+            handleKeyboard(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key) {
+                        case 'n': e.preventDefault(); this.newDocument(); break;
+                        case 'o': e.preventDefault(); this.openFile(); break;
+                        case 's': e.preventDefault(); this.saveFile(); break;
+                        case 'e': e.preventDefault(); this.exportFile(); break;
+                        case 'z': e.preventDefault(); e.shiftKey ? this.redo() : this.undo(); break;
+                        case 'y': e.preventDefault(); this.redo(); break;
+                        case 'x': e.preventDefault(); this.cut(); break;
+                        case 'c': e.preventDefault(); this.copy(); break;
+                        case 'v': e.preventDefault(); this.paste(); break;
+                        case 'a': e.preventDefault(); this.selectAll(); break;
+                        case 'd': e.preventDefault(); this.deselectAll(); break;
+                        case '0': e.preventDefault(); this.fitToScreen(); break;
+                        case '1': e.preventDefault(); this.actualSize(); break;
+                        case '=': e.preventDefault(); this.zoomIn(); break;
+                        case '-': e.preventDefault(); this.zoomOut(); break;
+                        case 'r': e.preventDefault(); this.toggleRulers(); break;
+                        case 'g': e.preventDefault(); this.toggleGrid(); break;
+                        case 'm': e.preventDefault(); this.toggleMiniMap(); break;
+                        case 'j': e.preventDefault(); this.duplicateLayer(); break;
+                        case 'e': if (e.shiftKey) { e.preventDefault(); this.mergeDown(); } break;
+                    }
+                }
+                
+                // Tool shortcuts (only when no modifier keys are pressed)
+                if (!e.ctrlKey && !e.metaKey && !e.altKey) {
+                    const toolShortcuts = {
+                        'v': 'select', 'm': 'move', 'b': 'brush', 'p': 'pencil',
+                        'e': 'eraser', 'c': 'crop', 't': 'text', 'g': 'gradient',
+                        'u': 'bucket', 'i': 'eyedropper', 's': 'clone', 'h': 'healing',
+                        'r': 'blur', 'n': 'sharpen', 'o': 'smudge'
+                    };
+                    
+                    if (toolShortcuts[e.key.toLowerCase()]) {
+                        this.selectTool(toolShortcuts[e.key.toLowerCase()]);
+                    }
+                }
+                
+                // Special keys
+                if (e.key === 'F11') {
+                    e.preventDefault();
+                    this.toggleFullscreen();
+                } else if (e.key === 'Delete' && this.currentLayer > 0) {
+                    this.deleteLayer();
+                } else if (e.key === 'Escape') {
+                    this.deselectAll();
+                }
+            }
+
+            // Touch/mobile support
+            handleTouch(e, phase) {
+                e.preventDefault();
+                
+                if (e.touches.length === 1) {
+                    const touch = e.touches[0];
+                    const mouseEvent = new MouseEvent(phase === 'start' ? 'mousedown' : 
+                                                    phase === 'move' ? 'mousemove' : 'mouseup', {
+                        clientX: touch.clientX,
+                        clientY: touch.clientY,
+                        button: 0
+                    });
+                    
+                    if (phase === 'start') this.startAction(mouseEvent);
+                    else if (phase === 'move') this.performAction(mouseEvent);
+                    else if (phase === 'end') this.endAction();
+                } else if (e.touches.length === 2 && phase === 'move') {
+                    // Pinch to zoom
+                    const touch1 = e.touches[0];
+                    const touch2 = e.touches[1];
+                    const distance = Math.hypot(
+                        touch2.clientX - touch1.clientX,
+                        touch2.clientY - touch1.clientY
+                    );
+                    
+                    if (this.lastPinchDistance) {
+                        const scale = distance / this.lastPinchDistance;
+                        this.zoom = Math.max(0.1, Math.min(10, this.zoom * scale));
+                        this.updateZoom();
+                    }
+                    this.lastPinchDistance = distance;
+                } else if (phase === 'end') {
+                    this.lastPinchDistance = null;
+                }
+            }
+
+            // Clipboard operations
+            cut() {
+                if (this.selection) {
+                    this.copy();
+                    this.deleteSelection();
+                }
+            }
+
+            copy() {
+                if (this.selection) {
+                    const { x, y, width, height } = this.selection;
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = width;
+                    tempCanvas.height = height;
+                    const tempCtx = tempCanvas.getContext('2d');
+                    
+                    tempCtx.drawImage(
+                        this.layers[this.currentLayer].canvas,
+                        x, y, width, height,
+                        0, 0, width, height
+                    );
+                    
+                    this.clipboard = {
+                        data: tempCanvas,
+                        width: width,
+                        height: height
+                    };
+                }
+            }
+
+            paste() {
+                if (this.clipboard) {
+                    const layerCanvas = this.layers[this.currentLayer].canvas;
+                    const ctx = layerCanvas.getContext('2d');
+                    
+                    // Paste at center or at last known position
+                    const pasteX = this.lastX || (this.canvas.width - this.clipboard.width) / 2;
+                    const pasteY = this.lastY || (this.canvas.height - this.clipboard.height) / 2;
+                    
+                    ctx.drawImage(this.clipboard.data, pasteX, pasteY);
+                    this.redrawCanvas();
+                    this.saveToHistory('Paste');
+                }
+            }
+
+            selectAll() {
+                this.selection = {
+                    x: 0,
+                    y: 0,
+                    width: this.canvas.width,
+                    height: this.canvas.height
+                };
+                this.updateSelectionOverlay();
+                document.getElementById('selectionInfo').textContent = 
+                    `${this.canvas.width} × ${this.canvas.height}`;
+            }
+
+            deselectAll() {
+                this.selection = null;
+                document.getElementById('selectionOverlay').style.display = 'none';
+                document.getElementById('selectionInfo').textContent = 'None';
+            }
+
+            deleteSelection() {
+                if (this.selection && this.layers[this.currentLayer]) {
+                    const { x, y, width, height } = this.selection;
+                    const ctx = this.layers[this.currentLayer].canvas.getContext('2d');
+                    ctx.clearRect(x, y, width, height);
+                    this.redrawCanvas();
+                    this.saveToHistory('Delete Selection');
+                }
+            }
+
+            updateSelectionOverlay() {
+                if (this.selection) {
+                    const overlay = document.getElementById('selectionOverlay');
+                    overlay.style.display = 'block';
+                    overlay.style.left = this.selection.x * this.zoom + 'px';
+                    overlay.style.top = this.selection.y * this.zoom + 'px';
+                    overlay.style.width = this.selection.width * this.zoom + 'px';
+                    overlay.style.height = this.selection.height * this.zoom + 'px';
+                }
+            }
+
+            // Transform operations
+            flipHorizontal() {
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                const imageData = ctx.getImageData(0, 0, layerCanvas.width, layerCanvas.height);
+                
+                ctx.save();
+                ctx.scale(-1, 1);
+                ctx.putImageData(imageData, -layerCanvas.width, 0);
+                ctx.restore();
+                
+                this.redrawCanvas();
+                this.saveToHistory('Flip Horizontal');
+            }
+
+            flipVertical() {
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                const imageData = ctx.getImageData(0, 0, layerCanvas.width, layerCanvas.height);
+                
+                ctx.save();
+                ctx.scale(1, -1);
+                ctx.putImageData(imageData, 0, -layerCanvas.height);
+                ctx.restore();
+                
+                this.redrawCanvas();
+                this.saveToHistory('Flip Vertical');
+            }
+
+            rotate(angle) {
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                const imageData = ctx.getImageData(0, 0, layerCanvas.width, layerCanvas.height);
+                
+                // Create temporary canvas for rotation
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                
+                if (Math.abs(angle) === 90) {
+                    tempCanvas.width = layerCanvas.height;
+                    tempCanvas.height = layerCanvas.width;
+                } else {
+                    tempCanvas.width = layerCanvas.width;
+                    tempCanvas.height = layerCanvas.height;
+                }
+                
+                tempCtx.translate(tempCanvas.width / 2, tempCanvas.height / 2);
+                tempCtx.rotate(angle * Math.PI / 180);
+                tempCtx.putImageData(imageData, -layerCanvas.width / 2, -layerCanvas.height / 2);
+                
+                // Update canvas dimensions if needed
+                if (Math.abs(angle) === 90) {
+                    layerCanvas.width = tempCanvas.width;
+                    layerCanvas.height = tempCanvas.height;
+                    this.canvas.width = tempCanvas.width;
+                    this.canvas.height = tempCanvas.height;
+                }
+                
+                ctx.clearRect(0, 0, layerCanvas.width, layerCanvas.height);
+                ctx.drawImage(tempCanvas, 0, 0);
+                
+                this.redrawCanvas();
+                this.saveToHistory(`Rotate ${angle}°`);
+                this.updateUI();
+            }
+
+            // Preset system
+            applyPreset(presetName) {
+                const presets = {
+                    'portrait': { brightness: 5, contrast: 10, saturation: -5, clarity: 15 },
+                    'landscape': { brightness: -5, contrast: 15, saturation: 10, vibrance: 20 },
+                    'street': { brightness: -10, contrast: 25, saturation: -10, clarity: 20 },
+                    'black-white': { saturation: -100, contrast: 20, clarity: 25 },
+                    'cinematic': { brightness: -15, contrast: 30, saturation: 20, highlights: -30, shadows: 20 },
+                    'warm': { hue: 15, saturation: 15, highlights: 10 },
+                    'cool': { hue: -15, saturation: 10, shadows: -10 },
+                    'dramatic': { contrast: 40, clarity: 30, highlights: -40, shadows: 30 }
+                };
+                
+                const preset = presets[presetName];
+                if (preset) {
+                    Object.keys(preset).forEach(key => {
+                        this.adjustments[key] = preset[key];
+                        const control = document.getElementById(key);
+                        const valueSpan = document.getElementById(key + 'Value');
+                        if (control && valueSpan) {
+                            control.value = preset[key];
+                            valueSpan.textContent = preset[key];
+                        }
+                    });
+                    this.applyAdjustmentsPreview();
+                }
+            }
+
+            applyAdjustmentsPreview() {
+                // Apply adjustments as filters (simplified approach)
+                const filters = [];
+                
+                if (this.adjustments.brightness !== 0) {
+                    filters.push(`brightness(${100 + this.adjustments.brightness}%)`);
+                }
+                if (this.adjustments.contrast !== 0) {
+                    filters.push(`contrast(${100 + this.adjustments.contrast}%)`);
+                }
+                if (this.adjustments.saturation !== 0) {
+                    filters.push(`saturate(${100 + this.adjustments.saturation}%)`);
+                }
+                if (this.adjustments.hue !== 0) {
+                    filters.push(`hue-rotate(${this.adjustments.hue}deg)`);
+                }
+                
+                this.canvas.style.filter = filters.join(' ');
+            }
+
+            // Curves functionality
+            drawCurves() {
+                const canvas = this.curvesCanvas;
+                const ctx = this.curvesCtx;
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw grid
+                ctx.strokeStyle = '#4a5568';
+                ctx.lineWidth = 1;
+                
+                for (let i = 0; i <= 4; i++) {
+                    const x = (canvas.width / 4) * i;
+                    const y = (canvas.height / 4) * i;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvas.height);
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(canvas.width, y);
+                    ctx.stroke();
+                }
+                
+                // Draw diagonal reference line
+                ctx.strokeStyle = '#718096';
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(0, canvas.height);
+                ctx.lineTo(canvas.width, 0);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Draw curve
+                ctx.strokeStyle = '#60a5fa';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                for (let x = 0; x < canvas.width; x++) {
+                    const inputValue = (x / canvas.width) * 255;
+                    const outputValue = this.calculateCurveValue(inputValue);
+                    const y = canvas.height - (outputValue / 255) * canvas.height;
+                    
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                
+                // Draw control points
+                this.curves.points.forEach(point => {
+                    const x = (point.x / 255) * canvas.width;
+                    const y = canvas.height - (point.y / 255) * canvas.height;
+                    
+                    ctx.fillStyle = '#60a5fa';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+
+            calculateCurveValue(input) {
+                // Linear interpolation between curve points
+                const points = this.curves.points.sort((a, b) => a.x - b.x);
+                
+                if (input <= points[0].x) return points[0].y;
+                if (input >= points[points.length - 1].x) return points[points.length - 1].y;
+                
+                for (let i = 0; i < points.length - 1; i++) {
+                    if (input >= points[i].x && input <= points[i + 1].x) {
+                        const t = (input - points[i].x) / (points[i + 1].x - points[i].x);
+                        return points[i].y + t * (points[i + 1].y - points[i].y);
+                    }
+                }
+                
+                return input; // Fallback
+            }
+
+            resetCurves() {
+                this.curves.points = [{x: 0, y: 0}, {x: 255, y: 255}];
+                this.drawCurves();
+            }
+
+            // Utility functions
+            hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            }
+
+            floodFillAlgorithm(imageData, x, y, newColor, tolerance) {
+                const data = imageData.data;
+                const width = imageData.width;
+                const height = imageData.height;
+                const startPos = (y * width + x) * 4;
+                
+                const startR = data[startPos];
+                const startG = data[startPos + 1];
+                const startB = data[startPos + 2];
+                
+                if (Math.abs(startR - newColor.r) + Math.abs(startG - newColor.g) + Math.abs(startB - newColor.b) < tolerance) return;
+                
+                const stack = [[x, y]];
+                const visited = new Set();
+                
+                while (stack.length > 0) {
+                    const [cx, cy] = stack.pop();
+                    const key = `${cx},${cy}`;
+                    
+                    if (visited.has(key) || cx < 0 || cx >= width || cy < 0 || cy >= height) continue;
+                    visited.add(key);
+                    
+                    const pos = (cy * width + cx) * 4;
+                    const r = data[pos];
+                    const g = data[pos + 1];
+                    const b = data[pos + 2];
+                    
+                    if (Math.abs(r - startR) + Math.abs(g - startG) + Math.abs(b - startB) > tolerance) continue;
+                    
+                    data[pos] = newColor.r;
+                    data[pos + 1] = newColor.g;
+                    data[pos + 2] = newColor.b;
+                    
+                    stack.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
+                }
+            }
+
+            // Additional filter implementations for completeness
+            edgeDetectionFilter(imageData) {
+                const data = imageData.data;
+                const width = imageData.width;
+                const height = imageData.height;
+                const output = new ImageData(width, height);
+                
+                const sobelX = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
+                const sobelY = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
+                
+                for (let y = 1; y < height - 1; y++) {
+                    for (let x = 1; x < width - 1; x++) {
+                        let pixelX = 0, pixelY = 0;
+                        
+                        for (let ky = 0; ky < 3; ky++) {
+                            for (let kx = 0; kx < 3; kx++) {
+                                const px = x + kx - 1;
+                                const py = y + ky - 1;
+                                const idx = (py * width + px) * 4;
+                                const gray = data[idx] * 0.299 + data[idx + 1] * 0.587 + data[idx + 2] * 0.114;
+                                
+                                pixelX += gray * sobelX[ky][kx];
+                                pixelY += gray * sobelY[ky][kx];
+                            }
+                        }
+                        
+                        const magnitude = Math.sqrt(pixelX * pixelX + pixelY * pixelY);
+                        const outIdx = (y * width + x) * 4;
+                        output.data[outIdx] = magnitude;
+                        output.data[outIdx + 1] = magnitude;
+                        output.data[outIdx + 2] = magnitude;
+                        output.data[outIdx + 3] = 255;
+                    }
+                }
+                
+                return output;
+            }
+
+            showKeyboardShortcuts() {
+                this.openModal('keyboardShortcutsModal');
+            }
+
+            showAbout() {
+                this.openModal('aboutModal');
+            }
+
+            loadPreferences() {
+                const saved = localStorage.getItem('photoshop-pro-preferences');
+                if (saved) {
+                    this.preferences = { ...this.preferences, ...JSON.parse(saved) };
+                }
+            }
+
+            savePreferences() {
+                localStorage.setItem('photoshop-pro-preferences', JSON.stringify(this.preferences));
+            }
+
+            handleBeforeUnload(e) {
+                if (this.history.length > 1) {
+                    e.preventDefault();
+                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+                    return e.returnValue;
+                }
+            }
+
+            mergeDown() {
+                if (this.currentLayer > 0) {
+                    const currentCanvas = this.layers[this.currentLayer].canvas;
+                    const belowCanvas = this.layers[this.currentLayer - 1].canvas;
+                    const belowCtx = belowCanvas.getContext('2d');
+                    
+                    belowCtx.save();
+                    belowCtx.globalAlpha = this.layers[this.currentLayer].opacity / 100;
+                    belowCtx.globalCompositeOperation = this.getCompositeOperation(this.layers[this.currentLayer].blendMode);
+                    belowCtx.drawImage(currentCanvas, 0, 0);
+                    belowCtx.restore();
+                    
+                    this.layers.splice(this.currentLayer, 1);
+                    this.currentLayer--;
+                    this.updateLayersUI();
+                    this.redrawCanvas();
+                    this.saveToHistory('Merge Down');
+                }
+            }
+
+            quit() {
+                if (confirm('Are you sure you want to quit? Any unsaved changes will be lost.')) {
+                    window.close();
+                }
+            }
+        }
+
+        // Global functions
+        function toggleSection(element) {
+            element.classList.toggle('collapsed');
+            const content = element.nextElementSibling;
+            content.classList.toggle('collapsed');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('open');
+        }
+
+        function createNewDocument() {
+            const name = document.getElementById('documentName').value;
+            const width = parseInt(document.getElementById('canvasWidth').value);
+            const height = parseInt(document.getElementById('canvasHeight').value);
+            const bgType = document.getElementById('backgroundType').value;
+            
+            if (width > 0 && height > 0) {
+                editor.canvas.width = width;
+                editor.canvas.height = height;
+                
+                let bgColor = '#ffffff';
+                if (bgType === 'black') bgColor = '#000000';
+                else if (bgType === 'transparent') bgColor = 'transparent';
+                else if (bgType === 'custom') bgColor = document.getElementById('customBackground').value;
+                
+                if (bgColor !== 'transparent') {
+                    editor.ctx.fillStyle = bgColor;
+                    editor.ctx.fillRect(0, 0, width, height);
+                }
+                
+                editor.layers = [{
+                    name: 'Background',
+                    visible: true,
+                    opacity: 100,
+                    blendMode: 'normal',
+                    type: 'image',
+                    canvas: editor.createLayerCanvas(),
+                    locked: false
+                }];
+                
+                if (bgColor !== 'transparent') {
+                    const ctx = editor.layers[0].canvas.getContext('2d');
+                    ctx.fillStyle = bgColor;
+                    ctx.fillRect(0, 0, width, height);
+                }
+                
+                editor.currentLayer = 0;
+                editor.redrawCanvas();
+                editor.updateLayersUI();
+                editor.saveToHistory(`New Document: ${name}`);
+                editor.updateUI();
+                closeModal('newDocumentModal');
+            }
+        }
+
+        // Background type change handler
+        document.getElementById('backgroundType')?.addEventListener('change', (e) => {
+            const customGroup = document.getElementById('customBackgroundGroup');
+            customGroup.style.display = e.target.value === 'custom' ? 'block' : 'none';
+        });
+
+        // Initialize the editor when page loads
+        let editor;
+        window.addEventListener('load', () => {
+            editor = new EnhancedPhotoEditor();
+            
+            // Add some demo content after initialization
+            setTimeout(() => {
+                // Create a simple gradient background
+                const ctx = editor.layers[0].canvas.getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, editor.canvas.width, editor.canvas.height);
+                gradient.addColorStop(0, '#4f46e5');
+                gradient.addColorStop(1, '#06b6d4');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, editor.canvas.width, editor.canvas.height);
+                editor.redrawCanvas();
+                editor.updateMiniMap();
+            }, 100);
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (editor) {
+                editor.updateUI();
+            }
+        });
+    </script>
+</body>
+</html>
