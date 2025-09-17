@@ -1752,12 +1752,21 @@
                 this.zoom = 1;
                 this.isDrawing = false;
                 this.isPanning = false;
+                this.isSelecting = false;
+                this.isCropping = false;
+                this.isGradient = false;
                 this.lastX = 0;
                 this.lastY = 0;
                 this.panStartX = 0;
                 this.panStartY = 0;
                 this.canvasOffsetX = 0;
                 this.canvasOffsetY = 0;
+                this.selectionStartX = 0;
+                this.selectionStartY = 0;
+                this.cropStartX = 0;
+                this.cropStartY = 0;
+                this.gradientStartX = 0;
+                this.gradientStartY = 0;
                 
                 this.history = [];
                 this.historyStep = -1;
@@ -2131,12 +2140,23 @@
 
             getMousePos(e) {
                 const rect = this.canvas.getBoundingClientRect();
-                const scaleX = this.canvas.width / (rect.width * this.zoom);
-                const scaleY = this.canvas.height / (rect.height * this.zoom);
                 
+                // Get the actual displayed size (accounting for CSS transform scale)
+                const displayedWidth = rect.width;
+                const displayedHeight = rect.height;
+                
+                // Calculate the scale factors from displayed size to actual canvas size
+                const scaleX = this.canvas.width / displayedWidth;
+                const scaleY = this.canvas.height / displayedHeight;
+                
+                // Get mouse position relative to the canvas element
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                
+                // Convert to canvas coordinates
                 return {
-                    x: ((e.clientX - rect.left) / this.zoom) + this.canvasOffsetX,
-                    y: ((e.clientY - rect.top) / this.zoom) + this.canvasOffsetY
+                    x: mouseX * scaleX,
+                    y: mouseY * scaleY
                 };
             }
 
@@ -2203,9 +2223,25 @@
                     return;
                 }
                 
-                if (!this.isDrawing) return;
-                
                 const pos = this.getMousePos(e);
+                
+                // Handle different tool modes
+                if (this.isSelecting) {
+                    this.updateSelection(pos);
+                    return;
+                }
+                
+                if (this.isCropping) {
+                    this.updateCrop(pos);
+                    return;
+                }
+                
+                if (this.isGradient) {
+                    this.updateGradient(pos);
+                    return;
+                }
+                
+                if (!this.isDrawing) return;
                 
                 switch (this.currentTool) {
                     case 'brush':
@@ -2248,6 +2284,23 @@
                 if (this.isPanning) {
                     this.isPanning = false;
                     this.canvas.style.cursor = 'default';
+                    return;
+                }
+                
+                if (this.isSelecting) {
+                    this.isSelecting = false;
+                    return;
+                }
+                
+                if (this.isCropping) {
+                    this.isCropping = false;
+                    // Could implement crop completion here
+                    return;
+                }
+                
+                if (this.isGradient) {
+                    const pos = this.getMousePos(event);
+                    this.finishGradient(pos);
                     return;
                 }
                 
@@ -2665,16 +2718,22 @@
                 const delta = e.deltaY > 0 ? 0.9 : 1.1;
                 const newZoom = Math.max(0.1, Math.min(10, this.zoom * delta));
                 
-                // Calculate zoom center point
+                // Get mouse position relative to canvas container
                 const rect = this.canvas.getBoundingClientRect();
-                const centerX = (e.clientX - rect.left) / rect.width;
-                const centerY = (e.clientY - rect.top) / rect.height;
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
                 
-                // Adjust offset to zoom towards mouse position
-                this.canvasOffsetX += (centerX - 0.5) * this.canvas.width * (this.zoom - newZoom);
-                this.canvasOffsetY += (centerY - 0.5) * this.canvas.height * (this.zoom - newZoom);
+                // Calculate the point on the canvas that the mouse is over
+                const canvasX = mouseX / this.zoom - this.canvasOffsetX / this.zoom;
+                const canvasY = mouseY / this.zoom - this.canvasOffsetY / this.zoom;
                 
+                // Update zoom
                 this.zoom = newZoom;
+                
+                // Adjust offset so the same canvas point stays under the mouse
+                this.canvasOffsetX = mouseX / this.zoom - canvasX;
+                this.canvasOffsetY = mouseY / this.zoom - canvasY;
+                
                 this.updateZoom();
             }
 
@@ -2696,7 +2755,10 @@
             }
 
             updateCanvasTransform() {
-                this.canvas.style.transform = `translate(${this.canvasOffsetX}px, ${this.canvasOffsetY}px) scale(${this.zoom})`;
+                // Apply zoom and pan transforms using CSS transform
+                // This keeps the coordinate system simple while providing visual zoom/pan
+                this.canvas.style.transform = `scale(${this.zoom}) translate(${this.canvasOffsetX / this.zoom}px, ${this.canvasOffsetY / this.zoom}px)`;
+                this.canvas.style.transformOrigin = 'top left';
             }
 
             fitToScreen() {
@@ -3078,6 +3140,17 @@
                 }
             }
 
+            updateSelectionOverlay() {
+                if (this.selection) {
+                    const overlay = document.getElementById('selectionOverlay');
+                    overlay.style.display = 'block';
+                    overlay.style.left = this.selection.x * this.zoom + 'px';
+                    overlay.style.top = this.selection.y * this.zoom + 'px';
+                    overlay.style.width = this.selection.width * this.zoom + 'px';
+                    overlay.style.height = this.selection.height * this.zoom + 'px';
+                }
+            }
+
             // Clipboard operations
             cut() {
                 if (this.selection) {
@@ -3151,15 +3224,77 @@
                 }
             }
 
-            updateSelectionOverlay() {
-                if (this.selection) {
-                    const overlay = document.getElementById('selectionOverlay');
-                    overlay.style.display = 'block';
-                    overlay.style.left = this.selection.x * this.zoom + 'px';
-                    overlay.style.top = this.selection.y * this.zoom + 'px';
-                    overlay.style.width = this.selection.width * this.zoom + 'px';
-                    overlay.style.height = this.selection.height * this.zoom + 'px';
-                }
+            startSelection(pos) {
+                this.selectionStartX = pos.x;
+                this.selectionStartY = pos.y;
+                this.isSelecting = true;
+            }
+
+            updateSelection(pos) {
+                if (!this.isSelecting) return;
+                
+                const x = Math.min(this.selectionStartX, pos.x);
+                const y = Math.min(this.selectionStartY, pos.y);
+                const width = Math.abs(pos.x - this.selectionStartX);
+                const height = Math.abs(pos.y - this.selectionStartY);
+                
+                this.selection = { x, y, width, height };
+                this.updateSelectionOverlay();
+                document.getElementById('selectionInfo').textContent = `${Math.round(width)} × ${Math.round(height)}`;
+            }
+
+            startCrop(pos) {
+                this.cropStartX = pos.x;
+                this.cropStartY = pos.y;
+                this.isCropping = true;
+                document.getElementById('cropOverlay').style.display = 'block';
+            }
+
+            updateCrop(pos) {
+                if (!this.isCropping) return;
+                
+                const overlay = document.getElementById('cropOverlay');
+                const x = Math.min(this.cropStartX, pos.x);
+                const y = Math.min(this.cropStartY, pos.y);
+                const width = Math.abs(pos.x - this.cropStartX);
+                const height = Math.abs(pos.y - this.cropStartY);
+                
+                overlay.style.left = x * this.zoom + 'px';
+                overlay.style.top = y * this.zoom + 'px';
+                overlay.style.width = width * this.zoom + 'px';
+                overlay.style.height = height * this.zoom + 'px';
+            }
+
+            startGradient(pos) {
+                this.gradientStartX = pos.x;
+                this.gradientStartY = pos.y;
+                this.isGradient = true;
+            }
+
+            updateGradient(pos) {
+                if (!this.isGradient) return;
+                // Gradient preview could be implemented here
+            }
+
+            finishGradient(pos) {
+                if (!this.isGradient) return;
+                
+                const layerCanvas = this.layers[this.currentLayer].canvas;
+                const ctx = layerCanvas.getContext('2d');
+                
+                const gradient = ctx.createLinearGradient(
+                    this.gradientStartX, this.gradientStartY,
+                    pos.x, pos.y
+                );
+                gradient.addColorStop(0, document.getElementById('foregroundColor').value);
+                gradient.addColorStop(1, document.getElementById('backgroundColor').value);
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, layerCanvas.width, layerCanvas.height);
+                
+                this.redrawCanvas();
+                this.saveToHistory('Apply Gradient');
+                this.isGradient = false;
             }
 
             // Transform operations
